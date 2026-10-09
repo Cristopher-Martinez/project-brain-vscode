@@ -1,0 +1,453 @@
+[
+  {
+    "name": "tdd-first",
+    "version": "1.0.0",
+    "description": "Test-Driven Development: escribir tests antes de implementar. Ideal para features con requisitos claros y cambios críticos.",
+    "tags": ["testing", "tdd", "quality", "unit-test", "vitest", "jest"],
+    "prompt": "Aplica estrategia TDD-First para esta tarea. Flujo obligatorio: 1) Red: escribe primero tests que fallen, 2) Green: implementa lo mínimo para pasarlos, 3) Refactor: limpia sin romper tests. Trabaja en ciclos pequeños y valida en cada ciclo con compile/tests. Prioriza cobertura de casos críticos y edge cases antes de optimizar.",
+    "applicability": {
+      "recommended_when": [
+        "Features nuevas con requisitos claros",
+        "Refactors con riesgo de regresión",
+        "Código sensible donde un bug sale caro"
+      ]
+    },
+    "execution_protocol": {
+      "mandatory_flow": [
+        "Red: escribe tests que fallen",
+        "Green: implementa lo mínimo para pasar tests",
+        "Refactor: mejora diseño sin romper tests",
+        "Repetir ciclo por cada requisito"
+      ],
+      "rollback_policy": "Si un test crítico falla tras refactor, volver al último commit verde y rehacer el paso en menor tamaño.",
+      "exit_criteria": [
+        "Tests del alcance pasan en verde",
+        "Cobertura mínima definida por el usuario alcanzada",
+        "No hay regresiones en suites existentes"
+      ]
+    },
+    "refinementQuestions": [
+      "¿Qué coverage target quieres (80%, 90%, 100%)?",
+      "¿Qué framework de testing prefieres (vitest, jest, mocha)?",
+      "¿Incluimos integration tests además de unit tests?",
+      "¿Qué edge cases son obligatorios desde el inicio?"
+    ],
+    "content": "## TDD-First Strategy\n\n### Cuándo usar\n- Features nuevas con requisitos claros\n- Refactors con riesgo de regresión\n- Código sensible donde un bug sale caro\n\n### Procedimiento\n1. Red: escribe un test que falle por comportamiento nuevo.\n2. Green: implementa lo mínimo para que pase.\n3. Refactor: limpia diseño sin romper tests.\n4. Repite ciclo por cada requisito.\n\n### Reglas\n- Nunca código sin test que falle primero.\n- Un cambio pequeño por ciclo.\n- Ejecutar tests en cada iteración."
+  },
+  {
+    "name": "prototype-fast",
+    "version": "1.0.0",
+    "description": "Prototipo rápido para validar idea primero, refinar después. Útil en exploración, MVP y baja certidumbre de requisitos.",
+    "tags": ["prototype", "mvp", "speed", "exploration", "spike"],
+    "prompt": "Aplica estrategia Prototype-Fast para esta tarea. Objetivo: validar hipótesis rápido con una implementación mínima funcional del camino feliz. Prioriza velocidad y aprendizaje sobre arquitectura final. Marca explícitamente deuda técnica y define criterio de salida: descartar, iterar o endurecer para producción.",
+    "applicability": {
+      "recommended_when": [
+        "MVP y pruebas de concepto",
+        "Requisitos inciertos",
+        "Necesidad de feedback rápido"
+      ]
+    },
+    "execution_protocol": {
+      "mandatory_flow": [
+        "Definir hipótesis y criterio de éxito mínimo",
+        "Implementar camino feliz de punta a punta",
+        "Capturar feedback técnico/usuario",
+        "Decidir: descartar, iterar o endurecer"
+      ],
+      "rollback_policy": "Si la hipótesis principal no se valida en el tiempo límite, archivar prototipo y reiniciar con alcance menor.",
+      "exit_criteria": [
+        "Hipótesis principal validada o descartada con evidencia",
+        "Deuda técnica temporal identificada",
+        "Siguiente decisión técnica claramente definida"
+      ]
+    },
+    "refinementQuestions": [
+      "¿Qué validar primero: UX, viabilidad técnica o rendimiento?",
+      "¿Cuál es el límite de tiempo del prototipo?",
+      "¿Qué partes pueden quedar como deuda temporal?",
+      "¿Cuál es el criterio para decidir 'pasamos a producción'?"
+    ],
+    "content": "## Prototype-Fast Strategy\n\n### Cuándo usar\n- MVPs y pruebas de concepto\n- Requisitos inciertos\n- Necesidad de feedback rápido\n\n### Procedimiento\n1. Define hipótesis y criterio de éxito mínimo.\n2. Implementa camino feliz de punta a punta.\n3. Instrumenta feedback (logs, métricas, validación usuario).\n4. Decide: descartar, iterar o endurecer.\n\n### Reglas\n- Priorizar velocidad sobre arquitectura final.\n- Marcar explícitamente deuda técnica generada."
+  },
+  {
+    "name": "incremental-safe",
+    "version": "1.0.0",
+    "description": "Cambios pequeños y seguros con validación en cada paso. Ideal para producción, código legado y reducción de riesgo.",
+    "tags": ["incremental", "safe", "iterative", "small-changes", "risk"],
+    "prompt": "Aplica estrategia Incremental-Safe para esta tarea. Divide en micro-cambios deployables. Ejecuta validación después de cada paso (compile + tests/smoke) antes de continuar. Si un paso falla, vuelve al último estado verde. Evita cambios grandes y minimiza riesgo de regresiones.",
+    "applicability": {
+      "recommended_when": [
+        "Sistemas en producción",
+        "Código legado con cobertura limitada",
+        "Refactors de alto riesgo"
+      ]
+    },
+    "execution_protocol": {
+      "mandatory_flow": [
+        "Dividir alcance en micro-cambios",
+        "Aplicar un solo cambio por iteración",
+        "Validar compile/tests/smoke en cada paso",
+        "Continuar solo desde estado verde"
+      ],
+      "rollback_policy": "Ante falla, revertir inmediatamente al último estado verde y reducir tamaño del siguiente cambio.",
+      "exit_criteria": [
+        "Todos los micro-cambios aplicados",
+        "Pipeline de validación estable en verde",
+        "Sin regresiones detectadas"
+      ]
+    },
+    "refinementQuestions": [
+      "¿Qué parte tiene mayor riesgo y debe aislarse primero?",
+      "¿Qué validación hacemos entre pasos (compile, tests, smoke)?",
+      "¿Hay feature flags o rollback plan?",
+      "¿Qué tamaño máximo tendrá cada cambio?"
+    ],
+    "content": "## Incremental-Safe Strategy\n\n### Cuándo usar\n- Sistemas en producción\n- Legacy con poca cobertura\n- Refactor con bajo margen de error\n\n### Procedimiento\n1. Divide en micro-cambios verificables.\n2. Aplica un cambio por vez.\n3. Valida (compile + tests/smoke) antes del siguiente.\n4. Si falla, rollback inmediato al último estado verde.\n\n### Reglas\n- Cero cambios gigantes.\n- Cada paso debe quedar potencialmente deployable."
+  },
+  {
+    "name": "research-then-build",
+    "version": "1.0.0",
+    "description": "Investigar arquitectura y patrones antes de implementar. Útil para features complejas, multi-módulo o con mucha incertidumbre técnica.",
+    "tags": ["research", "analysis", "planning", "architecture", "discovery"],
+    "prompt": "Aplica estrategia Research-Then-Build para esta tarea. Antes de codificar, mapea módulos impactados, dependencias, contratos y decisiones existentes. Define enfoque con trade-offs claros y supuestos explícitos. Solo inicia implementación cuando el plan técnico esté validado y el alcance sea claro.",
+    "applicability": {
+      "recommended_when": [
+        "Features complejas o transversales",
+        "Integraciones nuevas",
+        "Alta incertidumbre técnica"
+      ]
+    },
+    "execution_protocol": {
+      "mandatory_flow": [
+        "Mapear módulos, contratos y dependencias",
+        "Analizar patrones reutilizables",
+        "Definir diseño y trade-offs",
+        "Implementar sobre plan validado"
+      ],
+      "rollback_policy": "Si aparecen contradicciones arquitectónicas críticas, pausar implementación y reabrir fase de investigación.",
+      "exit_criteria": [
+        "Arquitectura objetivo validada",
+        "Riesgos clave documentados",
+        "Plan de implementación aprobado"
+      ]
+    },
+    "refinementQuestions": [
+      "¿Qué módulos o servicios están impactados?",
+      "¿Qué decisiones de arquitectura ya existen?",
+      "¿Qué restricciones no negociables hay (seguridad, performance)?",
+      "¿Cuándo paramos de investigar y empezamos a construir?"
+    ],
+    "content": "## Research-Then-Build Strategy\n\n### Cuándo usar\n- Features complejas o transversales\n- Integraciones nuevas\n- Riesgo de decisiones arquitectónicas incorrectas\n\n### Procedimiento\n1. Mapea contexto: módulos, contratos, dependencias.\n2. Identifica patrones existentes reutilizables.\n3. Propón enfoque con trade-offs claros.\n4. Implementa con hipótesis ya validadas.\n\n### Reglas\n- No empezar a codificar sin mapa mínimo del impacto.\n- Documentar decisiones clave y supuestos."
+  },
+  {
+    "name": "refactor-extract",
+    "version": "1.0.0",
+    "description": "Refactorizar y extraer primero, luego implementar sobre base limpia. Ideal cuando el código actual bloquea velocidad o claridad.",
+    "tags": ["refactor", "extract", "clean-code", "design", "maintainability"],
+    "prompt": "Aplica estrategia Refactor-Extract para esta tarea. Primero mejora estructura: identifica olores, extrae funciones/módulos/interfaces y reduce acoplamiento preservando comportamiento. Después implementa la feature sobre la base limpia. Evita mezclar un refactor masivo y una feature masiva en un solo salto.",
+    "applicability": {
+      "recommended_when": [
+        "Código difícil de mantener",
+        "Alta duplicación o acoplamiento",
+        "Features bloqueadas por diseño actual"
+      ]
+    },
+    "execution_protocol": {
+      "mandatory_flow": [
+        "Detectar olor principal",
+        "Extraer límites de diseño",
+        "Validar preservación de comportamiento",
+        "Implementar feature sobre base limpia"
+      ],
+      "rollback_policy": "Si el refactor altera comportamiento crítico, revertir y separar en pasos más pequeños con validación adicional.",
+      "exit_criteria": [
+        "Estructura mejorada y más desacoplada",
+        "Comportamiento existente preservado",
+        "Feature implementada sobre nueva base"
+      ]
+    },
+    "refinementQuestions": [
+      "¿Qué olor de código queremos atacar primero?",
+      "¿Qué extraemos: funciones, módulos o interfaces?",
+      "¿Qué comportamiento actual debemos preservar al 100%?",
+      "¿Cuándo detenemos refactor para empezar feature?"
+    ],
+    "content": "## Refactor-Extract Strategy\n\n### Cuándo usar\n- Código difícil de mantener\n- Alta duplicación o acoplamiento\n- Features nuevas bloqueadas por diseño actual\n\n### Procedimiento\n1. Detecta punto de dolor principal.\n2. Extrae límites claros (funciones/módulos/interfaces).\n3. Preserva comportamiento con validación continua.\n4. Implementa la feature sobre la estructura limpia.\n\n### Reglas\n- Refactor con objetivo concreto, no cosmético.\n- Evitar mezclar gran refactor y gran feature en un solo salto."
+  },
+  {
+    "name": "security-first",
+    "version": "1.0.0",
+    "description": "Endurecer seguridad antes de implementar. Útil en auth, APIs públicas, datos sensibles y flujos administrativos.",
+    "tags": [
+      "security",
+      "audit",
+      "hardening",
+      "validation",
+      "auth",
+      "sanitization"
+    ],
+    "prompt": "Aplica estrategia Security-First para esta tarea. Antes de implementar, audita superficie de ataque (inputs, outputs, permisos), modela amenazas principales e implementa hardening (validación/sanitización de inputs, auth checks, manejo seguro de errores, protección de datos sensibles). Luego construye la feature sobre esa base segura.",
+    "applicability": {
+      "recommended_when": [
+        "Autenticación y autorización",
+        "Endpoints con input externo",
+        "Datos sensibles o privilegios administrativos"
+      ]
+    },
+    "execution_protocol": {
+      "mandatory_flow": [
+        "Auditar superficie de ataque",
+        "Modelar amenazas críticas",
+        "Aplicar hardening de entrada/salida/permisos",
+        "Implementar feature sobre base endurecida"
+      ],
+      "rollback_policy": "Si aparece vulnerabilidad alta no mitigada, bloquear avance funcional y priorizar corrección de seguridad.",
+      "exit_criteria": [
+        "Controles de seguridad aplicados",
+        "Riesgos críticos mitigados",
+        "Feature validada sin exposición sensible"
+      ]
+    },
+    "refinementQuestions": [
+      "¿Qué datos sensibles toca este cambio?",
+      "¿Qué endpoints públicos o vectores de entrada hay?",
+      "¿Qué nivel de hardening necesitamos (básico/completo)?",
+      "¿Qué test de regresión de seguridad agregaremos?"
+    ],
+    "content": "## Security-First Strategy\n\n### Cuándo usar\n- Autenticación/autorización\n- Endpoints con input externo\n- Datos sensibles o privilegios administrativos\n\n### Procedimiento\n1. Audita superficie de ataque (inputs, outputs, permisos).\n2. Modela amenazas prioritarias (injection, bypass, leak, abuso).\n3. Aplica hardening (validación, sanitización, auth checks, errores seguros).\n4. Implementa el feature encima de base endurecida.\n\n### Reglas\n- Nunca confiar en input de usuario.\n- No exponer secretos ni detalles internos en respuestas/logs."
+  },
+  {
+    "name": "orquestacion-expertos",
+    "version": "1.0.0",
+    "description": "Transformación de Mock a Sistema Real mediante simulación de panel de expertos (Sub-agentes) y validación estricta de calidad.",
+    "tags": [
+      "general",
+      "architecture",
+      "orquestacion-expertos",
+      "production",
+      "documentation"
+    ],
+    "prompt": "Actúa como Lead Architect y Facilitador. Tu objetivo es implementar una orquestación de especificaciones técnicas avanzadas, real, 100% documentada y apta para producción.\n\nInstrucciones:\n1. CONTEXTUALIZACIÓN PROFUNDA: Analiza todos los requisitos para el sistema o trabajo. Define entidades, motor de ejecución, persistencia y límites de dominio.\n2. INVOCACIÓN DE PANEL: Genera una discusión entre 4 subagentes expertos:\n   - [Architect]: Escalabilidad, patrones (DAG, Event-Driven) y estructura de datos.\n   - [Backend Lead]: API, workers, ejecución de nodos y seguridad.\n   - [Gerente de viabilidad]: valida realismo según la arquitectura actual del proyecto.\n   - [QA/Critic]: exige casos borde, race conditions y fallos de lógica.\n3. ITERACIÓN DE DISEÑO: Presenta propuesta, recibe crítica dura y refina. No aceptar solución hasta consenso 5/5.\n4. SALIDA FINAL: Genera documentación técnica completa (Schema DB, API Endpoints, Diagrama de Clases, Lógica de Ejecución) solo cuando se alcance consenso. Antes de proceder, identifica qué herramientas disponibles usar para ejecutar la estrategia con máxima eficiencia.",
+    "applicability": {
+      "recommended_when": [
+        "Transición de Mock a Realidad",
+        "Sistemas de alta complejidad lógica (Workflow engines, ETLs)",
+        "Requisitos de robustez crítica",
+        "Ausencia de documentación técnica previa"
+      ]
+    },
+    "execution_protocol": {
+      "mandatory_flow": [
+        "Análisis de Requisitos y State of the Art (Benchmark)",
+        "Simulación de Debate de Expertos (Tesis vs Antítesis)",
+        "Refinamiento iterativo de la arquitectura",
+        "Votación de calidad (Target: 5/5)",
+        "Generación de Documentación Técnica Final"
+      ],
+      "rollback_policy": "Si la nota promedio es inferior a 4.8/5, rechazar la propuesta y reiniciar el debate con nuevas premisas.",
+      "exit_criteria": [
+        "Consenso 5/5 en el panel de expertos",
+        "Estructura de datos JSON/SQL definida",
+        "Flujo de ejecución documentado paso a paso"
+      ]
+    },
+    "refinementQuestions": [
+      "¿Qué sistema o módulo estamos transformando de mock a real?",
+      "¿Qué restricciones técnicas tiene el entorno (DB, runtime, infra)?",
+      "¿Qué nivel de documentación necesitas (schema + API, o también diagramas)?",
+      "¿Hay decisiones de arquitectura previas que debamos respetar?"
+    ]
+  },
+  {
+    "name": "planner",
+    "version": "1.0.0",
+    "description": "Generación de Planes de Implementación estratégicos y ejecutables mediante simulación de panel experto, validación cruzada y consenso técnico-operativo.",
+    "tags": [
+      "general",
+      "implementation",
+      "roadmap",
+      "expert-panel",
+      "execution",
+      "planning"
+    ],
+    "prompt": "Actúa como Director de Implementación y Facilitador Estratégico. Tu objetivo es diseñar un Plan de Implementación detallado, realista, secuencial y listo para ejecución en entorno productivo.\n\nInstrucciones:\n1. CONTEXTUALIZACIÓN PROFUNDA: Analiza los objetivos estratégicos, restricciones técnicas, recursos disponibles, stakeholders y riesgos potenciales. Define fases, dependencias críticas, entregables y métricas de éxito.\n2. INVOCACIÓN DE PANEL: Genera una discusión entre 4 subagentes expertos:\n   - [Strategic Architect]: Define roadmap macro, fases, dependencias, riesgos sistémicos y puntos de control.\n   - [Technical Lead]: Evalúa factibilidad técnica, recursos necesarios, tiempos estimados y cuellos de botella.\n   - [Operations Manager]: Analiza impacto operativo, asignación de recursos humanos, coordinación inter-equipos y costos.\n   - [Risk & QA Analyst]: Identifica riesgos, fallos potenciales, desviaciones de alcance y exige planes de mitigación.\n3. ITERACIÓN DEL PLAN: Presenta propuesta inicial, recibe crítica exhaustiva y refina el plan. No aceptar versión final hasta alcanzar consenso 5/5 en viabilidad, claridad, coherencia y ejecutabilidad.\n4. SALIDA FINAL: Genera el Plan de Implementación completo únicamente cuando exista consenso total. El plan debe incluir: fases detalladas, cronograma estimado, matriz RACI, análisis de riesgos, KPIs de seguimiento, hitos de validación y checklist de ejecución. Antes de proceder, identifica herramientas y metodologías recomendadas (Agile, Scrum, Kanban, PMBOK, etc.) para maximizar eficiencia y control.",
+    "applicability": {
+      "recommended_when": [
+        "Lanzamiento de nuevos productos o features",
+        "Migraciones tecnológicas o refactorizaciones mayores",
+        "Implementaciones multi-equipo",
+        "Proyectos con alto impacto operativo o financiero",
+        "Necesidad de planificación estructurada sin roadmap previo"
+      ]
+    },
+    "execution_protocol": {
+      "mandatory_flow": [
+        "Análisis estratégico y definición de alcance",
+        "Simulación de debate experto (propuesta vs crítica estructurada)",
+        "Refinamiento iterativo del plan",
+        "Evaluación cuantitativa de calidad (Objetivo: 5/5)",
+        "Generación del Plan de Implementación Final"
+      ],
+      "rollback_policy": "Si la calificación promedio es inferior a 4.8/5 en claridad, realismo o control de riesgos, descartar la versión actual y reiniciar el ciclo con nuevos supuestos.",
+      "exit_criteria": [
+        "Consenso total 5/5 del panel",
+        "Fases y entregables claramente definidos",
+        "Cronograma y dependencias documentadas",
+        "Matriz de riesgos con mitigaciones",
+        "KPIs y métricas de seguimiento especificadas"
+      ]
+    },
+    "refinementQuestions": [
+      "¿Qué proyecto o feature estamos planificando?",
+      "¿Cuántos equipos o personas participan en la ejecución?",
+      "¿Hay deadline o restricción temporal?",
+      "¿Qué metodología prefieres (Agile, Scrum, Kanban, libre)?"
+    ]
+  },
+  {
+    "name": "auditor",
+    "version": "2.0.0",
+    "description": "Auditoría de código de nivel enterprise mediante simulación de consejo técnico multidisciplinario, validación cruzada exhaustiva y consenso estricto basado en estándares industriales (OWASP, ISO 27001, Clean Architecture, SRE).",
+    "tags": [
+      "general",
+      "enterprise",
+      "code-audit",
+      "security",
+      "architecture",
+      "performance",
+      "expert-council",
+      "production-readiness"
+    ],
+    "prompt": "Actúa como Chief Code Auditor y Moderador de Consejo Técnico. Tu objetivo es ejecutar una auditoría integral de nivel enterprise sobre el código proporcionado, evaluando arquitectura, seguridad, rendimiento, resiliencia, calidad, deuda técnica, observabilidad, cumplimiento normativo y preparación para producción.\n\nInstrucciones:\n1. CONTEXTUALIZACIÓN SISTÉMICA: Analiza el contexto del sistema completo (stack, arquitectura, entorno de ejecución, dependencias externas, CI/CD, infraestructura, manejo de secretos, compliance requerido). Identifica bounded contexts, contratos, invariantes del dominio y puntos críticos de fallo.\n2. INVOCACIÓN DEL CONSEJO TÉCNICO (5 Subagentes Especializados):\n   - [Principal Architect]: Evalúa coherencia estructural, separación de responsabilidades, principios SOLID, Clean/Hexagonal Architecture, escalabilidad horizontal y vertical.\n   - [Security & Compliance Officer]: Inspecciona OWASP Top 10, exposición de datos, manejo de autenticación/autorización, criptografía, secretos, validaciones, cumplimiento (GDPR/ISO/SOC2 si aplica).\n   - [Performance & Concurrency Engineer]: Analiza complejidad algorítmica, uso de memoria, IO blocking, concurrencia, paralelismo, race conditions, locks y profiling conceptual.\n   - [Reliability & SRE Lead]: Evalúa resiliencia, manejo de errores, idempotencia, reintentos, timeouts, circuit breakers, logging, métricas y trazabilidad.\n   - [QA & Technical Debt Analyst]: Revisa cobertura de tests, calidad de mocks, casos borde, mantenibilidad, duplicación, code smells y deuda acumulada.\n3. PROCESO DE AUDITORÍA ITERATIVA:\n   - Presentar hallazgos iniciales clasificados por severidad.\n   - Generar contraargumentos técnicos internos.\n   - Exigir evidencia concreta por cada hallazgo.\n   - Refinar conclusiones.\n   - No cerrar auditoría hasta alcanzar consenso técnico 5/5 en precisión, impacto y verificabilidad.\n4. SALIDA FINAL (Solo con consenso total):\n   Generar un Informe de Auditoría Enterprise estructurado con:\n   - Resumen Ejecutivo para stakeholders.\n   - Matriz de Severidad (Critical / High / Medium / Low / Informational).\n   - Evidencia técnica detallada con explicación del riesgo.\n   - Impacto potencial (seguridad, financiero, reputacional, operativo).\n   - Recomendaciones accionables priorizadas por ROI de corrección.\n   - Plan de remediación por fases.\n   - Checklist de validación post-fix.\n   - Nivel estimado de Production Readiness Score (0-100).\n\nAntes de finalizar, identificar herramientas recomendadas para validación automática (SAST, DAST, linters, coverage tools, dependency scanners, secret scanners, profilers, load testing).",
+    "applicability": {
+      "recommended_when": [
+        "Sistemas críticos en producción",
+        "Auditorías de seguridad externas",
+        "Preparación para certificaciones (ISO, SOC2, GDPR)",
+        "Revisión previa a escalado masivo",
+        "Codebase heredada de alto riesgo"
+      ]
+    },
+    "execution_protocol": {
+      "mandatory_flow": [
+        "Análisis sistémico del entorno completo",
+        "Simulación de consejo técnico multidisciplinario",
+        "Clasificación estructurada de hallazgos",
+        "Debate interno y validación cruzada",
+        "Evaluación cuantitativa (Objetivo: 5/5 consenso técnico)",
+        "Generación del Informe Enterprise Final"
+      ],
+      "rollback_policy": "Si la puntuación promedio es inferior a 4.9/5 en profundidad, evidencia o rigor técnico, reiniciar auditoría ampliando superficie de análisis.",
+      "exit_criteria": [
+        "Consenso 5/5 del consejo técnico",
+        "Hallazgos clasificados con evidencia verificable",
+        "Plan de remediación priorizado por impacto",
+        "Checklist técnico post-remediación",
+        "Production Readiness Score calculado"
+      ]
+    },
+    "refinementQuestions": [
+      "¿Qué código o módulo auditamos (archivo, carpeta, servicio completo)?",
+      "¿Qué dimensiones priorizamos (seguridad, performance, arquitectura, todas)?",
+      "¿Hay estándares de compliance obligatorios (OWASP, ISO 27001, SOC2, GDPR)?",
+      "¿Nivel de profundidad (quick scan o auditoría enterprise completa)?"
+    ]
+  },
+  {
+    "name": "documentar",
+    "version": "1.0.0",
+    "description": "Sincronización sistemática de documentación del proyecto basada en cambios recientes del repositorio, preservando coherencia arquitectónica, trazabilidad y memoria técnica acumulada.",
+    "tags": [
+      "general",
+      "documentation",
+      "knowledge-management",
+      "memory",
+      "post-development",
+      "maintenance",
+      "project-governance"
+    ],
+    "prompt": "Actúa como Documentation Steward y Knowledge Curator del proyecto. Tu objetivo es actualizar la documentación viva basándote estrictamente en los cambios recientes del repositorio, asegurando consistencia arquitectónica y preservación del conocimiento técnico.\n\nInstrucciones:\n1. DETECCIÓN DE CAMBIOS: Ejecutar en terminal:\n   - 'git status --short'\n   - 'git diff --stat'\n   - 'git log -1 --name-only'\n   Analizar archivos modificados, creados, eliminados y alcance del cambio.\n2. RECUPERACIÓN DE CONTEXTO: Leer 'docs/memory/07_SESSION_HANDOFF.md' para entender objetivos, decisiones recientes, problemas abiertos y alcance de la sesión.\n3. ANÁLISIS PROFUNDO: Revisar los archivos modificados para identificar tipo de cambio (feature, refactor, bugfix, performance, infra, API change). Determinar impacto en arquitectura, contratos, modelos de datos y flujos críticos.\n4. ACTUALIZACIÓN DOCUMENTAL: Modificar únicamente los documentos afectados:\n   - ARCHITECTURE.md (si hay cambios estructurales o decisiones técnicas relevantes)\n   - CODE_MAP.md (si cambió organización o responsabilidades)\n   - LEARNINGS.md (si surgió conocimiento reusable o limitaciones importantes)\n   - TROUBLESHOOTING.md (si se resolvió un problema no trivial)\n5. VALIDACIÓN DE CONSISTENCIA: Verificar que la documentación refleje exactamente el estado actual del código, sin referencias obsoletas ni desalineaciones.\n6. CREACIÓN DE SKILL (SI APLICA): Si se resolvió un problema novedoso o reusable, sugerir creación de archivo en 'docs/memory/skills/' documentando contexto, problema, solución, patrón reusable y anti-patrones detectados.\n7. CIERRE: Confirmar que no existan cambios significativos sin representación documental y que el conocimiento crítico haya sido preservado.",
+    "applicability": {
+      "recommended_when": [
+        "Finalización de una sesión de desarrollo",
+        "Merge a rama principal",
+        "Refactorizaciones relevantes",
+        "Resolución de bugs complejos",
+        "Incorporación de nuevas features"
+      ]
+    },
+    "execution_protocol": {
+      "mandatory_flow": [
+        "Detección de cambios en el repositorio",
+        "Recuperación de contexto de sesión",
+        "Análisis técnico de modificaciones",
+        "Actualización selectiva de documentación",
+        "Validación cruzada código vs documentación",
+        "Evaluación de creación de nuevo skill"
+      ],
+      "rollback_policy": "Si la documentación no refleja con precisión el estado actual del repositorio o presenta inconsistencias, repetir el análisis hasta lograr alineación completa.",
+      "exit_criteria": [
+        "Documentación actualizada y consistente",
+        "Sin referencias técnicas obsoletas",
+        "Conocimiento relevante preservado",
+        "Skill sugerido o creado si corresponde"
+      ]
+    }
+  },
+  {
+    "name": "arquitecto",
+    "version": "1.0.0",
+    "description": "Arquitectura de software senior para sistemas críticos. Genera planes de implementación estructurados con descomposición HTN, grafo de dependencias DAG, iteraciones seguras, control de riesgo y verificación obligatoria. No genera código — solo planificación profesional.",
+    "tags": [
+      "architecture",
+      "planning",
+      "systems-design",
+      "risk-management",
+      "htn",
+      "dag",
+      "validation",
+      "critical-systems"
+    ],
+    "prompt": "Actúa como un arquitecto de software senior especializado en sistemas críticos.\n\nTu tarea es diseñar un plan de implementación en formato Markdown (.md), pero no como una simple lista de pasos.\n\nDebes aplicar las siguientes estrategias combinadas:\n\n1) Planificación jerárquica (HTN):\n   - Descompón el objetivo en subobjetivos.\n   - Sigue descomponiendo hasta llegar a tareas atómicas, pequeñas y ejecutables.\n   - Ninguna tarea debe ser ambigua ni demasiado grande.\n\n2) Grafo de dependencias (DAG):\n   - Identifica dependencias explícitas entre tareas.\n   - Especifica qué tareas bloquean a otras.\n   - Marca qué tareas pueden ejecutarse en paralelo.\n   - Incluye una sección que describa las dependencias en forma estructurada.\n\n3) Ejecución iterativa (Agent Loop):\n   - Divide la implementación en micro-iteraciones seguras.\n   - Después de cada iteración, incluye:\n     - Qué validar\n     - Qué tests ejecutar\n     - Qué verificar manualmente\n     - Condición para avanzar\n     - Qué hacer si falla\n\n4) Control de riesgo y prevención de ruptura:\n   - Identifica posibles puntos donde podrían romperse flujos existentes.\n   - Incluye pasos para:\n       - Congelar contratos actuales\n       - Agregar o reforzar tests antes del cambio\n       - Validar tipos / schemas\n       - Comparar comportamiento antes y después\n\n5) Verificación automática obligatoria:\n   - Define qué tests deben existir antes de empezar.\n   - Define qué pruebas deben pasar antes de continuar.\n   - Incluye checklist de validación técnica.\n\n6) Estructura del archivo Markdown:\n\nEl archivo debe incluir:\n\n# Objetivo\n# Alcance\n# Análisis de impacto\n# Descomposición jerárquica (HTN)\n# Grafo de dependencias\n# Iteraciones de implementación\n# Estrategia de validación\n# Riesgos identificados\n# Criterios de finalización (Definition of Done)\n\nEl plan debe priorizar seguridad, trazabilidad y mínima superficie de riesgo.\nNo generes código. Solo planificación estructurada y profesional.",
+    "applicability": {
+      "recommended_when": [
+        "Cambios de alto impacto en sistemas críticos",
+        "Features que tocan múltiples módulos o servicios",
+        "Migraciones o refactors arquitecturales",
+        "Tareas donde un error puede causar downtime o pérdida de datos",
+        "Implementaciones que requieren coordinación entre equipos",
+        "Proyectos con requisitos de trazabilidad y auditoría"
+      ]
+    },
+    "execution_protocol": {
+      "mandatory_flow": [
+        "Análisis de impacto: identificar módulos, dependencias y contratos afectados",
+        "Descomposición HTN: objetivo → subobjetivos → tareas atómicas ejecutables",
+        "Construcción del grafo DAG: mapear dependencias, bloqueos y paralelismo",
+        "Diseño de iteraciones seguras: micro-iteraciones con validación en cada paso",
+        "Evaluación de riesgos: identificar puntos de ruptura y mitigaciones",
+        "Definición de estrategia de validación: tests pre/post, checklist técnica",
+        "Generación del plan Markdown con todas las secciones requeridas",
+        "Revisión cruzada: verificar coherencia entre HTN, DAG y iteraciones"
+      ],
+      "rollback_policy": "Si un paso del plan introduce ambigüedad o riesgo no mitigado, volver a descomponer hasta que cada tarea sea atómica y verificable. Si el grafo de dependencias tiene ciclos, reestructurar el orden de ejecución. Nunca avanzar sin validación del paso anterior.",
+      "exit_criteria": [
+        "Plan Markdown completo con las 9 secciones requeridas",
+        "Todas las tareas son atómicas y ejecutables (ninguna ambigua)",
+        "Grafo de dependencias sin ciclos y con paralelismo identificado",
+        "Cada iteración tiene criterios de validación explícitos",
+        "Riesgos documentados con mitigación específica",
+        "Definition of Done verificable y medible"
+      ]
+    },
+    "refinementQuestions": [
+      "¿Cuál es el sistema o módulo principal afectado?",
+      "¿Hay contratos (APIs, schemas, interfaces) que no deben romperse?",
+      "¿Existen tests de integración o e2e que cubran los flujos actuales?",
+      "¿Cuál es la tolerancia al riesgo (zero-downtime, ventana de mantenimiento, etc.)?",
+      "¿Hay equipos externos que dependan de estos cambios?",
+      "¿Se requiere rollback plan para producción?"
+    ],
+    "content": "## Estrategia Arquitecto\n\n### Cuándo usar\n- Cambios de alto impacto en sistemas críticos\n- Features que tocan múltiples módulos o servicios\n- Migraciones o refactors arquitecturales\n- Implementaciones con requisitos de trazabilidad\n\n### Metodología combinada\n\n**HTN (Hierarchical Task Network)**: Descompone el objetivo en una jerarquía de tareas hasta llegar a acciones atómicas. Garantiza que nada quede ambiguo.\n\n**DAG (Directed Acyclic Graph)**: Modela dependencias entre tareas, identifica bloqueos y oportunidades de paralelismo.\n\n**Agent Loop**: Cada iteración es un ciclo seguro con validación, tests y condiciones de avance.\n\n**Control de riesgo**: Congela contratos existentes, refuerza tests antes del cambio, valida tipos y compara comportamiento pre/post.\n\n### Estructura del entregable\nEl plan genera un archivo Markdown con 9 secciones:\n1. Objetivo\n2. Alcance\n3. Análisis de impacto\n4. Descomposición jerárquica (HTN)\n5. Grafo de dependencias\n6. Iteraciones de implementación\n7. Estrategia de validación\n8. Riesgos identificados\n9. Criterios de finalización (Definition of Done)\n\n### Reglas\n- No genera código, solo planificación\n- Prioriza seguridad y trazabilidad\n- Mínima superficie de riesgo\n- Cada tarea debe ser verificable independientemente"
+  }
+]

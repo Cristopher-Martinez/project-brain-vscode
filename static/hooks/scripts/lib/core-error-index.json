@@ -1,0 +1,63 @@
+{
+  "$schema": "Core Error Index — Phase 1 Immunity Layer",
+  "version": "1.0.0",
+  "errors": [
+    {
+      "id": "E-DEPLOY-01",
+      "title": "Deploy sin package.json → Tools Invisibles",
+      "zone": "deploy",
+      "severity": "critical",
+      "decision": "deny",
+      "rootCause": "Deploy que solo copia dist/ sin package.json → declaraciones de contributes.languageModelTools obsoletas → tools invisibles",
+      "triggerTools": ["run_in_terminal"],
+      "triggerPaths": ["dist/", "dist\\\\"],
+      "triggerPatterns": ["Copy-Item.*dist", "copy.*dist", "cp\\s.*dist"],
+      "negativePatterns": ["package\\.json"],
+      "detection": "Terminal command copies dist/ without also copying package.json",
+      "recurrences": 3,
+      "message": "🧬 IMMUNITY E-DEPLOY-01: Deploy detectado sin package.json. Usa `npm run deploy` en vez de Copy-Item manual. Sin package.json, las tools declaradas en contributes.languageModelTools quedan obsoletas."
+    },
+    {
+      "id": "E-CONFIG-01",
+      "title": "Tool registrada en código pero no en package.json enum",
+      "zone": "config",
+      "severity": "high",
+      "decision": "ask",
+      "rootCause": "Nueva tool class en lm-tools-*.ts sin actualizar el enum de package.json → tool registrada pero invisible para VS Code",
+      "triggerTools": [
+        "create_file",
+        "replace_string_in_file",
+        "multi_replace_string_in_file"
+      ],
+      "triggerPaths": ["src/lm-tools-*.ts", "src/lm-tools-registration.ts"],
+      "triggerPatterns": [
+        "class\\s+\\w+Tool\\s+extends",
+        "registerTool",
+        "new\\s+\\w+Tool\\("
+      ],
+      "negativePatterns": [],
+      "detection": "Editing lm-tools-*.ts with tool class definition/registration",
+      "recurrences": 2,
+      "message": "🧬 IMMUNITY E-CONFIG-01: Posible tool nueva detectada. ¿Actualizaste también el enum en package.json (contributes.languageModelTools)? Sin eso, VS Code no la expone."
+    },
+    {
+      "id": "E-CONFIG-02",
+      "title": "Tool en package.json pero no en .agent.md",
+      "zone": "config",
+      "severity": "high",
+      "decision": "ask",
+      "rootCause": "Tool declarada en package.json pero no listada en .github/agents/*.agent.md tools:[] → agente no la usa",
+      "triggerTools": [
+        "create_file",
+        "replace_string_in_file",
+        "multi_replace_string_in_file"
+      ],
+      "triggerPaths": ["package.json"],
+      "triggerPatterns": ["languageModelTools"],
+      "negativePatterns": [],
+      "detection": "Editing package.json in languageModelTools section",
+      "recurrences": 1,
+      "message": "🧬 IMMUNITY E-CONFIG-02: Cambio en languageModelTools detectado. ¿Actualizaste también .github/agents/*.agent.md tools:[]? Sin eso, el agente no tendrá acceso a la tool."
+    }
+  ]
+}

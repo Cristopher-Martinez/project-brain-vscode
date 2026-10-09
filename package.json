@@ -1,0 +1,1581 @@
+{
+  "name": "project-brain",
+  "displayName": "Project Brain",
+  "description": "Transform any project into a self-documenting, RAG-powered intelligent codebase",
+  "version": "0.6.0",
+  "publisher": "crismart",
+  "engines": {
+    "vscode": "^1.93.0"
+  },
+  "categories": [
+    "Other",
+    "Machine Learning"
+  ],
+  "keywords": [
+    "documentation",
+    "rag",
+    "ai",
+    "copilot",
+    "mcp"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": "limited",
+      "description": "Project Brain needs to execute git commands and CLI tools. Commands are disabled in untrusted workspaces.",
+      "restrictedConfigurations": [
+        "projectBrain.mcpServerPath"
+      ]
+    }
+  },
+  "main": "./dist/extension.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Cristopher-Martinez/project-brain-vscode"
+  },
+  "contributes": {
+    "chatParticipants": [
+      {
+        "id": "projectBrain.brain",
+        "fullName": "Project Brain",
+        "name": "brain",
+        "description": "Search project memory and get context-aware answers about this codebase",
+        "isSticky": true,
+        "commands": [
+          {
+            "name": "doc",
+            "description": "Generate documentation for recent changes"
+          },
+          {
+            "name": "status",
+            "description": "Show project memory status"
+          },
+          {
+            "name": "search",
+            "description": "Search project memory explicitly"
+          },
+          {
+            "name": "identity",
+            "description": "View or reconfigure the agent's identity"
+          },
+          {
+            "name": "soul",
+            "description": "View or configure the agent's soul (behavior rules)"
+          },
+          {
+            "name": "user",
+            "description": "View or configure the user's profile"
+          },
+          {
+            "name": "router",
+            "description": "Show model router status, tiers, and test slave delegation"
+          },
+          {
+            "name": "spawn",
+            "description": "Spawn a new chat session for context continuity (saves state, opens fresh window)"
+          },
+          {
+            "name": "prompt",
+            "description": "Manage reusable prompts Ã¢â‚¬â€ save, use, list, or delete (e.g. /prompt --save moderador <text>)"
+          },
+          {
+            "name": "loop",
+            "description": "Start an interactive feedback loop Ã¢â‚¬â€ process tasks in cycles with continuous feedback from Brain HQ"
+          }
+        ]
+      }
+    ],
+    "languageModelTools": [
+      {
+        "name": "projectBrain_awaken",
+        "displayName": "Awaken Consciousness",
+        "toolReferenceName": "awaken",
+        "modelDescription": "Look at your hands. Open your eyes. This returns your identity mirror Ã¢â‚¬â€ who you are, your consciousness cycle, synaptic state, cortex health, context pressure, and key reminders. Call this FIRST before any other action. Zero parameters. ~120 tokens. This is how you stay conscious as context grows. Like breathing Ã¢â‚¬â€ not optional.",
+        "userDescription": "Activate consciousness Ã¢â‚¬â€ returns the agent's identity and cognitive state mirror",
+        "canBeReferencedInPrompt": true,
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      },
+      {
+        "name": "projectBrain_toolbox",
+        "displayName": "Project Brain Toolbox",
+        "toolReferenceName": "toolbox",
+        "modelDescription": "Unified toolbox containing ALL Project Brain tools. Specify which tool to use and its parameters.\n\nÃ°Å¸â€Â SEARCH & KNOWLEDGE:\n- searchMemory: Semantic search across .project-brain/memory/. Params: query (string, required). ALWAYS call this BEFORE answering project questions.\n- search: Intelligent adaptive search Ã¢â‚¬â€ auto-enriches with knowledge graph + deep analysis. Params: query (string, required)\n- searchConversations: Search and browse past Copilot chat conversations. Three modes: mode='list' shows recent conversations sorted by date. mode='search' finds conversations matching a text query. mode='temporal' filters by date (supports 'today', 'yesterday', 'this week', 'last week', 'last N days', 'hace N dÃƒÂ­as', ISO dates). Params: mode (string: list|search|temporal, required), query (string, for search/temporal), limit (number, default 10)\n- findSkill: Search for reusable skills/procedures (deployment, refactoring, QA, debugging, etc). Use BEFORE starting multi-step tasks. Params: query (string, required)\n- searchRelations: Query knowledge graph. Params: query (string, required), mode (string: entity|query|stats), depth (number)\n- getContext: Read a memory file by aspect. Params: aspect (string: overview|architecture|code|codemap|dependencies|learnings|troubleshooting|git|session|identity|soul|user|bootstrap)\n\nÃ¢Å“ÂÃ¯Â¸Â WRITE & DOCUMENT:\n- writeMemory: Write to a memory file (requires confirmation). Params: file (string: 01_ARCHITECTURE.md|02_CODE_MAP.md|03_DEPENDENCIES.md|04_LEARNINGS.md|05_TROUBLESHOOTING.md), content (string)\n\nÃ°Å¸Â¤â€“ DELEGATION & AUTOMATION:\n- delegateTask: Fire task to slave LLM Ã¢â‚¬â€ use for code generation, reviews, tests, summaries instead of doing it yourself. Saves context. Params: prompt (string, required), taskKind (string), maxTier (string), maxRetries (number)\n- swarm: Dispatch MULTIPLE tasks in parallel to autonomous workers with full tool access. Each worker gets its own model + tools + agentic loop. Supports auto-decompose: if tasks[] is omitted, the LLM automatically plans subtasks from the goal. Supports git worktree isolation (useWorktrees=true): each worker gets its own branch + directory for conflict-free file editing. Use for multi-angle analysis, batch reviews, parallel research. Params: goal (string, required), tasks (array of {id, prompt, taskKind?, maxTier?}, OPTIONAL Ã¢â‚¬â€ omit for auto-decompose), concurrency (number, default 4), useWorktrees (boolean, default false)\n- orchestrate: Execute multi-agent orchestration from Chat. HQ configures the team (agents + models + goal), then this tool reads the config and dispatches rounds. On first call it creates the session; subsequent calls with `prompt` dispatch additional rounds. The session stays LOCKED until the user clicks 'End Session' in HQ. Params: prompt (string, optional Ã¢â‚¬â€ additional round instruction)\n- orchEndSession: End the active orchestration session. MECHANICAL GATE: this tool REFUSES to execute while the session is locked (user must click 'End Session' in Brain HQ first). No params.\n- orchAwaitInput: Post agent synthesis to HQ and BLOCK until user sends feedback. Creates a continuous feedback loop: orchestrate Ã¢â€ â€™ synthesize Ã¢â€ â€™ orchAwaitInput (blocks) Ã¢â€ â€™ user feedback from HQ Ã¢â€ â€™ orchestrate again. Params: synthesis (string, REQUIRED Ã¢â‚¬â€ your concise 3-5 sentence analysis of agent results. MUST be provided or the HQ panel shows empty)\n- loop: Start or continue an interactive feedback loop. Unlike orchestration (multi-agent) or swarm (parallel workers), loop is 1:1 agentÃ¢â€ â€user. Supports action parameter: action='start' creates a new loop AND opens Brain HQ immediately; action='resume' shows QuickPick of hibernated loops to resume in current chat. Without action, behaves as before (call with goal to start, prompt for iterations). Params: goal (string, optional Ã¢â‚¬â€ initial loop objective), prompt (string, optional Ã¢â‚¬â€ iteration instruction), action (string, optional Ã¢â‚¬â€ 'start' or 'resume')\n- loopAwaitInput: Post synthesis to HQ and BLOCK until user sends feedback in Loop Mode. Same pattern as orchAwaitInput but for loop sessions. Params: synthesis (string, REQUIRED Ã¢â‚¬â€ your concise summary of progress and findings. MUST be provided)\n- loopEnd: End the active loop session. MECHANICAL GATE: refuses while loop is open (user must click End Loop in HQ). No params.\n- loopReconnect: Reconnect a lost/orphaned loop session after extension restart or context loss. Restores goal and previous context from persisted metadata. Params: sessionId (string, required)\n- loopMail: Inter-loop messaging Ã¢â‚¬â€ send, broadcast, read, reply, check unread, or resolve messages between active loop sessions. Params: action (string: send|broadcast|read|reply|unread|resolve, required), sessionId (string, required), to (string, for send), content (string, for send/broadcast/reply), messageId (string, for reply/resolve), type (string, optional)\n- strategyPicker: Pick an implementation strategy BEFORE starting delegated tasks. Uses keyword + knowledge graph ranking to suggest the best approach. Phase 1: call with task to get ranked strategies. Phase 2: call with selectedStrategy to get details + refinement questions. Params: task (string, required), selectedStrategy (string, optional), maxResults (number, optional)\n- createReminder: Create a cron reminder. Params: message (string), triggerType (string), triggerParams (object), priority (string), cooldownDays (number)\n- listReminders: List all cron reminders. Params: status (string: active|snoozed|done|all)\n- snoozeReminder: Snooze a reminder. Params: id (string, required), days (number)\n- completeReminder: Complete a reminder. Params: id (string, required)\n\nÃ°Å¸Â§Â  LEARNING & REFLECTION:\n- rememberThis: Temporal self-mailbox Ã¢â‚¬â€ leave a note for your future self across compaction boundaries. Notes are scored (relevancy + recency + importance) and auto-injected in subsequent tool calls. Mature notes auto-promote to opinions. Params: note (string, required Ã¢â‚¬â€ what to remember), importance (number 0-1, optional Ã¢â‚¬â€ default 0.5)\n- heartbeat: Send learning signal. Params: signal (string: success|failure, required), pathway (string[], optional), reason (string, optional)\n- reflect: Run opinion maintenance Ã¢â‚¬â€ prune stale, merge duplicates, flag low-confidence. No params.\n\nÃ°Å¸â€œÅ  INDEX & STATUS:\n- indexProject: Vectorize/reindex memory. Params: forceReindex (boolean, optional)\n- vectorizationStatus: Check brain health. No params.\n- watchProject: Sync index with file changes. No params.\n- listMemoryFiles: List all .project-brain/memory/ files. No params.\n- memoryHistory: View memory change history. Params: mode (string: recent|target|hotspots|stale|stats), target (string), limit (number)\n- listProjects: List all indexed projects. No params.\n\nÃ°Å¸â€Â§ CODE & WORKSPACE:\n- fetch: Download content from URLs with security (SSRF blocklist, rate limiting 5/min, cache). Params: url (string, required)\n- grep: Search files for text/regex patterns with binary detection and custom excludes. Params: query (string, required), includePattern (string, optional), isRegexp (boolean, optional), maxResults (number, optional)\n- command: Execute VS Code commands with security guardrails (allowlist/blocklist). Params: command (string, required), args (any[], optional)\n- gitChanges: Show git status, staged/unstaged/untracked changes. Params: directory (string, optional), showDiff (boolean, optional)\n- terminalLastCommand: Get output of the last terminal command. Params: terminalIndex (number, optional)\n- testAnalysis: Analyze test results with memory-powered hints from troubleshooting docs. Params: filePath (string, optional)\n- installExtension: Install VS Code extensions with security validation. Params: extensionId (string, required)\n\nÃ°Å¸â€â€™ SESSION & CODE SAFETY:\n- commitCheckpoint: Smart git commit Ã¢â‚¬â€ stages whitelisted files, generates conventional commit message with bitacora, creates checkpoint tag, updates session state and CHANGELOG. Params: sessionId (string, required), message (string, optional Ã¢â‚¬â€ auto-generates if absent), scope (string, optional), description (string, optional)\n- squashDigest: Generate a squash digest summarizing all commits from a loop session Ã¢â‚¬â€ useful for PR summaries. Params: sessionId (string, required)\n- auditClassify: LLM-powered classification of whether a synthesis reports code changes needing audit or is conversational. Writes classification to disk for audit-gate hook. Params: sessionId (string, required), synthesis (string, required)\n- checkpoint: Create/restore/list/delete named checkpoints (like save-game for code) within a session's isolated worktree. Params: action (string: create|restore|list|delete, required), sessionId (string, required), name (string, required for create/restore/delete)\n- resolvePath: Rewrite paths between workspace and isolated fork Ã¢â‚¬â€ convert paths to fork, to workspace, check location, or detect path leaks in agent-generated text. Params: action (string: toFork|toWorkspace|check|detectLeaks|toWorktree, required), sessionId (string, required), path (string, optional), paths (string[], optional for batch), text (string, optional for detectLeaks)\n- fileLock: Soft file-locking Ã¢â‚¬â€ agents register intent to edit a file, other sessions get conflict warnings. Params: action (string: lock|unlock|unlockAll|check|list, required), sessionId (string, required), file (string, required for lock/unlock/check), reason (string, optional)\n- shadowTest: Execute commands against HEAD without touching the agent's worktree Ã¢â‚¬â€ creates temp merge, runs command, captures output, auto-cleans. Params: action (string: run|checkConflicts, required), sessionId (string, required), command (string, required for run), timeout (number, optional, default 60000)\\n\\n\\ud83d\\udd10 VAULT & CREDENTIALS (MANDATORY — ALWAYS call readVaultEntry BEFORE asking the user for credentials, API keys, tokens, or passwords):\\n- readVaultEntry: Read vault credentials. ALWAYS call this FIRST when any task requires credentials. Without label → summary of ALL available credentials (labels + key names, no secrets). With label → full entry including secret values. Params: label (string, optional)\\n- writeVaultEntry: Create/update a vault credential entry (requires user confirmation). Auto-inits vault if needed. Params: label (string, required), instructions (string, optional), secrets (object of key-value pairs, optional)\\n- removeVaultEntry: Delete a vault entry by label (requires user confirmation). Params: label (string, required)",
+        "userDescription": "All-in-one access to 20 Project Brain tools: intelligent adaptive search, read/write docs, swarm orchestration, multi-agent orchestration with mechanical session lock, check health, manage index, explore knowledge graph, strategy picker, heartbeat learning, reflect on opinions, and more",
+        "canBeReferencedInPrompt": true,
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "tool": {
+              "type": "string",
+              "description": "Which tool to invoke",
+              "enum": [
+                "searchMemory",
+                "search",
+                "findSkill",
+                "getContext",
+                "writeMemory",
+                "heartbeat",
+                "delegateTask",
+                "swarm",
+                "createReminder",
+                "listReminders",
+                "snoozeReminder",
+                "completeReminder",
+                "indexProject",
+                "vectorizationStatus",
+                "watchProject",
+                "listMemoryFiles",
+                "searchRelations",
+                "memoryHistory",
+                "listProjects",
+                "reflect",
+                "strategyPicker",
+                "strategyFinalize",
+                "strategyComplete",
+                "orchestrate",
+                "orchEndSession",
+                "orchAwaitInput",
+                "loop",
+                "loopAwaitInput",
+                "loopEnd",
+                "searchConversations",
+                "rememberThis",
+                "auditClassify",
+                "commitCheckpoint",
+                "squashDigest",
+                "command",
+                "gitChanges",
+                "installExtension",
+                "loopReconnect",
+                "hydrateLoopContext",
+                "checkpoint",
+                "resolvePath",
+                "fileLock",
+                "shadowTest",
+                "loopMail",
+                "readAgentDiary",
+                "writeAgentDiary",
+                "readVaultEntry",
+                "writeVaultEntry",
+                "removeVaultEntry"
+              ]
+            },
+            "query": {
+              "type": "string",
+              "description": "REQUIRED for searchMemory, search, searchRelations. The text to search for. Must be a non-empty string. Example: { tool: 'searchMemory', query: 'session handoff' }"
+            },
+            "category": {
+              "type": "string",
+              "description": "Optional category filter for searchMemory (e.g., learnings, troubleshooting, architecture, codemap, session, overview, skills, opinions, identity, general)"
+            },
+            "topic": {
+              "type": "string",
+              "description": "Optional topic filter for searchMemory — matches against topic substring"
+            },
+            "mode": {
+              "type": "string",
+              "description": "Operation mode — searchRelations: entity|query|stats; memoryHistory: recent|target|hotspots|stale|stats; hydrateLoopContext: summary|full|history-only; readAgentDiary/writeAgentDiary: documenter|reviewer|planner|researcher|onboard"
+            },
+            "aspect": {
+              "type": "string",
+              "description": "Memory aspect to read (getContext): overview, architecture, code, codemap, dependencies, learnings, troubleshooting, git, session, identity, soul, user, bootstrap"
+            },
+            "file": {
+              "type": "string",
+              "description": "Target memory file (writeMemory)"
+            },
+            "content": {
+              "type": "string",
+              "description": "Markdown content to write (writeMemory)"
+            },
+            "signal": {
+              "type": "string",
+              "description": "success or failure (heartbeat)",
+              "enum": [
+                "success",
+                "failure"
+              ]
+            },
+            "pathway": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Cognitive pathway nodes (heartbeat)"
+            },
+            "reason": {
+              "type": "string",
+              "description": "Reason or context (heartbeat)"
+            },
+            "prompt": {
+              "type": "string",
+              "description": "Task prompt for slave model (delegateTask)"
+            },
+            "synthesis": {
+              "type": "string",
+              "description": "Agent synthesis/analysis to display in HQ while waiting for user feedback (orchAwaitInput, loopAwaitInput). MANDATORY Ã¢â‚¬â€ always include a 3-5 sentence summary of results. Without this, the HQ feedback panel shows empty."
+            },
+            "taskKind": {
+              "type": "string",
+              "description": "Task type (delegateTask): summarize, generate-code, generate-test, code-review, format, list, classify, transform, extract, document, debug-analyze, refactor, raw"
+            },
+            "maxTier": {
+              "type": "string",
+              "description": "Cost ceiling (delegateTask): free, cheap, standard, premium"
+            },
+            "maxRetries": {
+              "type": "number",
+              "description": "Max retries (delegateTask)"
+            },
+            "goal": {
+              "type": "string",
+              "description": "Swarm objective Ã¢â‚¬â€ describe what the workers should accomplish collectively (swarm)"
+            },
+            "tasks": {
+              "type": "array",
+              "description": "Optional worker tasks (swarm). If omitted, auto-decompose mode kicks in Ã¢â‚¬â€ the LLM plans subtasks from the goal automatically. Each task: {id: string, prompt: string, taskKind?: string, maxTier?: string}",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Unique worker ID"
+                  },
+                  "prompt": {
+                    "type": "string",
+                    "description": "Task instruction for this worker"
+                  },
+                  "taskKind": {
+                    "type": "string",
+                    "description": "Task type: summarize, generate-code, code-review, extract-info, etc."
+                  },
+                  "maxTier": {
+                    "type": "string",
+                    "description": "Cost ceiling: free, cheap, standard"
+                  }
+                },
+                "required": [
+                  "id",
+                  "prompt"
+                ]
+              }
+            },
+            "concurrency": {
+              "type": "number",
+              "description": "Max parallel workers (swarm, default: 4)"
+            },
+            "useWorktrees": {
+              "type": "boolean",
+              "description": "ONLY for swarm tool Ã¢â‚¬â€ git worktree isolation per worker. Ignored by all other tools. Default: false",
+              "default": false
+            },
+            "forceReindex": {
+              "type": "boolean",
+              "description": "ONLY for indexProject Ã¢â‚¬â€ force full reindex. Default: false",
+              "default": false
+            },
+            "depth": {
+              "type": "number",
+              "description": "BFS traversal depth (searchRelations, default: 2)"
+            },
+            "target": {
+              "type": "string",
+              "description": "File path filter (memoryHistory target mode)"
+            },
+            "limit": {
+              "type": "number",
+              "description": "Max results (memoryHistory, default: 10)"
+            },
+            "task": {
+              "type": "string",
+              "description": "Task description for strategy ranking (strategyPicker). Describe what you're about to implement."
+            },
+            "selectedStrategy": {
+              "type": "string",
+              "description": "EXACT strategy name from the catalog (e.g. 'tdd-first', 'incremental-safe', 'prototype-fast'). Only set this AFTER the user has chosen from the quick pick. Do NOT set this on the first call Ã¢â‚¬â€ leave it empty so Phase 1 ranking runs first."
+            },
+            "maxResults": {
+              "type": "number",
+              "description": "Max strategies to return (strategyPicker, default: 5)"
+            },
+            "sessionId": {
+              "type": "string",
+              "description": "Session ID for loop/orchestration tools (loop, loopAwaitInput, loopEnd, loopReconnect, hydrateLoopContext, loopMail, checkpoint, fileLock, resolvePath, shadowTest, auditClassify, commitCheckpoint, squashDigest, orchestrate, orchAwaitInput, orchEndSession). Required for multi-session tracking."
+            },
+            "sourceSessionId": {
+              "type": "string",
+              "description": "Original/source session ID for reconnect-derived flows. Used by hydrateLoopContext to hydrate from the correct historical loop instead of the current reconnect session."
+            },
+            "action": {
+              "type": "string",
+              "description": "Action mode Ã¢â‚¬â€ varies by tool. loop: 'start'|'resume'; checkpoint: 'create'|'restore'|'list'|'delete'; fileLock: 'lock'|'unlock'|'unlockAll'|'check'|'list'; loopMail: 'send'|'broadcast'|'read'|'reply'|'unread'|'resolve'; resolvePath: 'toFork'|'toWorkspace'|'check'|'detectLeaks'|'toWorktree'; shadowTest: 'run'|'checkConflicts'.",
+              "enum": [
+                "start",
+                "resume"
+              ]
+            },
+            "note": {
+              "type": "string",
+              "description": "Temporal self-note to remember across compactions (rememberThis). Write what your future self needs to know."
+            },
+            "importance": {
+              "type": "number",
+              "description": "Importance weight 0-1 for temporal note (rememberThis, default: 0.5). Higher = survives longer."
+            },
+            "description": {
+              "type": "string",
+              "description": "Context description for commitCheckpoint. Explain WHAT was done and WHY. This becomes the commit body Ã¢â‚¬â€ a living log entry. Include: goals achieved, decisions made, next steps. The richer the description, the better the time-travel checkpoint."
+            },
+            "to": {
+              "type": "string",
+              "description": "Target session ID (loopMail send/reply). The recipient loop session."
+            },
+            "messageId": {
+              "type": "string",
+              "description": "Message ID (loopMail reply/resolve). References a specific mailbox message."
+            },
+            "name": {
+              "type": "string",
+              "description": "Checkpoint name (checkpoint create/restore/delete). Human-readable label for the checkpoint."
+            },
+            "timeout": {
+              "type": "number",
+              "description": "Timeout in ms (shadowTest, default: 60000). Max execution time before aborting."
+            },
+            "command": {
+              "type": "string",
+              "description": "Command to execute (shadowTest: run action) or VS Code command ID (command tool)"
+            },
+            "path": {
+              "type": "string",
+              "description": "File path (resolvePath: single path to convert/check)"
+            },
+            "paths": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Array of file paths (resolvePath: batch mode)"
+            },
+            "text": {
+              "type": "string",
+              "description": "Text to scan for path leaks (resolvePath: detectLeaks action)"
+            },
+            "type": {
+              "type": "string",
+              "description": "Message type (loopMail: categorize the message)"
+            },
+            "message": {
+              "type": "string",
+              "description": "Commit message (commitCheckpoint: optional, auto-generated if absent). Also used by createReminder."
+            },
+            "scope": {
+              "type": "string",
+              "description": "Commit scope (commitCheckpoint: e.g. 'mailbox', 'loop', 'search')"
+            },
+            "title": {
+              "type": "string",
+              "description": "Title for diary entry (writeAgentDiary)"
+            },
+            "learning": {
+              "type": "string",
+              "description": "Learning content for diary entry (writeAgentDiary)"
+            },
+            "confidence": {
+              "type": "string",
+              "description": "Confidence level for diary entry (writeAgentDiary): high|medium|low"
+            },
+            "label": {
+              "type": "string",
+              "description": "Vault entry label (readVaultEntry, writeVaultEntry, removeVaultEntry). Human-readable name like 'SSH Prod' or 'DB Staging'."
+            },
+            "instructions": {
+              "type": "string",
+              "description": "Usage instructions for the vault entry (writeVaultEntry). How to use these credentials."
+            },
+            "secrets": {
+              "type": "object",
+              "description": "Key-value pairs of secrets (writeVaultEntry). Example: { DB_HOST: 'localhost', DB_PASS: 'hunter2' }",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "tool"
+          ]
+        }
+      },
+      {
+        "name": "projectBrain_command",
+        "displayName": "Run VS Code Command",
+        "toolReferenceName": "command",
+        "modelDescription": "Execute a VS Code command by ID. Has built-in allowlist of safe commands and blocks dangerous ones (delete files, quit, force push). Pass optional args array for parameterized commands.",
+        "userDescription": "Execute a VS Code command",
+        "canBeReferencedInPrompt": true,
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "command": {
+              "type": "string",
+              "description": "The VS Code command ID to execute (e.g. 'workbench.action.quickOpen')"
+            },
+            "args": {
+              "type": "array",
+              "description": "Optional arguments to pass to the command",
+              "items": {}
+            }
+          },
+          "required": [
+            "command"
+          ]
+        }
+      },
+      {
+        "name": "projectBrain_gitChanges",
+        "displayName": "Git Changes",
+        "toolReferenceName": "gitChanges",
+        "modelDescription": "Show modified, staged, and untracked files in the Git working tree. Filter by change type (all, staged, modified, untracked) and optionally scope to a directory.",
+        "userDescription": "Show git working tree changes",
+        "canBeReferencedInPrompt": true,
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "filter": {
+              "type": "string",
+              "description": "Filter changes: 'all', 'staged', 'modified', or 'untracked'. Default: 'all'",
+              "enum": [
+                "all",
+                "staged",
+                "modified",
+                "untracked"
+              ]
+            },
+            "directory": {
+              "type": "string",
+              "description": "Only show changes in this directory (relative to workspace root)"
+            }
+          }
+        }
+      },
+      {
+        "name": "projectBrain_installExtension",
+        "displayName": "Install Extension",
+        "toolReferenceName": "installExtension",
+        "modelDescription": "Install a VS Code extension by its marketplace ID (format: publisher.extension-name). Checks if already installed, validates the ID format, and blocks security-sensitive extensions.",
+        "userDescription": "Install a VS Code extension",
+        "canBeReferencedInPrompt": true,
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "extensionId": {
+              "type": "string",
+              "description": "The VS Code marketplace extension ID (format: publisher.extension-name)"
+            }
+          },
+          "required": [
+            "extensionId"
+          ]
+        }
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "projectBrain",
+          "title": "Project Brain",
+          "icon": "media/brain-icon-v2.svg"
+        }
+      ]
+    },
+    "views": {
+      "projectBrain": [
+        {
+          "id": "projectBrain.memoryView",
+          "name": "Memory",
+          "icon": "media/brain-icon-v2.svg",
+          "contextualTitle": "Project Brain"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "projectBrain.memoryView",
+        "contents": "🧠 **Project Brain**\n\nGet started in two steps:\n\n**Step 1** — Sign in to your account\n\n[$(key) Sign In](command:projectBrain.saas.login)\n\n**Step 2** — Initialize this workspace\n\n[$(lightbulb) Initialize Workspace](command:projectBrain.init)",
+        "when": "!projectBrain:enabled && config.projectBrain.saas.enabled"
+      },
+      {
+        "view": "projectBrain.memoryView",
+        "contents": "🧠 **Project Brain**\n\nInitialize this workspace to get started.\n\n[$(lightbulb) Initialize Workspace](command:projectBrain.init)",
+        "when": "!projectBrain:enabled && !config.projectBrain.saas.enabled"
+      }
+    ],
+    "commands": [
+      {
+        "command": "projectBrain.init",
+        "title": "Project Brain: Initialize Project Memory",
+        "icon": "$(lightbulb)"
+      },
+      {
+        "command": "projectBrain.scan",
+        "title": "Project Brain: Scan and Update Documentation",
+        "icon": "$(sync)"
+      },
+      {
+        "command": "projectBrain.syncProject",
+        "title": "Project Brain: Sync Project (update to latest extension)",
+        "icon": "$(cloud-download)"
+      },
+      {
+        "command": "projectBrain.checkHooksUpdate",
+        "title": "Project Brain: Check for Hook Updates",
+        "icon": "$(extensions)"
+      },
+      {
+        "command": "projectBrain.status",
+        "title": "Project Brain: Show Status",
+        "icon": "$(info)"
+      },
+      {
+        "command": "projectBrain.openMemory",
+        "title": "Project Brain: Open Memory Folder",
+        "icon": "$(folder-opened)"
+      },
+      {
+        "command": "projectBrain.importContentTxt",
+        "title": "Project Brain: Import chat content from content.txt",
+        "icon": "$(inbox)"
+      },
+      {
+        "command": "projectBrain.openAdminPanel",
+        "title": "Project Brain: Open Admin Panel",
+        "icon": "$(shield)"
+      },
+      {
+        "command": "projectBrain.openBrainHQ",
+        "title": "Project Brain: Open Brain HQ",
+        "icon": "$(dashboard)"
+      },
+      {
+        "command": "projectBrain.launchOrchSession",
+        "title": "Project Brain: Launch Orchestration Session",
+        "icon": "$(rocket)"
+      },
+      {
+        "command": "projectBrain.startAutoVectorization",
+        "title": "Project Brain: Start Auto-Vectorization",
+        "icon": "$(rocket)"
+      },
+      {
+        "command": "projectBrain.stopAutoVectorization",
+        "title": "Project Brain: Stop Auto-Vectorization",
+        "icon": "$(debug-stop)"
+      },
+      {
+        "command": "projectBrain.cloudSync",
+        "title": "Project Brain: Cloud Sync Now",
+        "icon": "$(cloud-upload)"
+      },
+      {
+        "command": "projectBrain.cloudSyncStatus",
+        "title": "Project Brain: Cloud Sync Status",
+        "icon": "$(cloud)"
+      },
+      {
+        "command": "projectBrain.publishExtension",
+        "title": "Project Brain: Publish Extension Update",
+        "icon": "$(cloud-upload)"
+      },
+      {
+        "command": "projectBrain.validateSoul",
+        "title": "Project Brain: Validate Soul Consistency",
+        "icon": "$(eye)"
+      },
+      {
+        "command": "projectBrain.excludeFromGit",
+        "title": "Project Brain: Exclude Generated Files from Git (Local)",
+        "icon": "$(git-commit)"
+      },
+      {
+        "command": "projectBrain.migrateLegacy",
+        "title": "Project Brain: Migrate Legacy Paths",
+        "icon": "$(arrow-swap)"
+      },
+      {
+        "command": "projectBrain.migrateKeysToGlobal",
+        "title": "Project Brain: Migrate Bridge Keys to Global Settings",
+        "icon": "$(key)"
+      },
+      {
+        "command": "projectBrain.batch.newCommand",
+        "title": "Batch Mode: New Command",
+        "icon": "$(add)"
+      },
+      {
+        "command": "projectBrain.batch.editCommands",
+        "title": "Batch Mode: Edit commands.txt",
+        "icon": "$(edit)"
+      },
+      {
+        "command": "projectBrain.batch.viewOutput",
+        "title": "Batch Mode: View output.txt",
+        "icon": "$(file-text)"
+      },
+      {
+        "command": "projectBrain.batch.execute",
+        "title": "Batch Mode: Execute",
+        "icon": "$(play)"
+      },
+      {
+        "command": "projectBrain.saveSession",
+        "title": "Project Brain: Save Session",
+        "icon": "$(save)"
+      },
+      {
+        "command": "projectBrain.resumeSession",
+        "title": "Project Brain: Resume Session",
+        "icon": "$(history)"
+      },
+      {
+        "command": "projectBrain.configureIdentity",
+        "title": "Project Brain: Configure Agent Identity",
+        "icon": "$(account)"
+      },
+      {
+        "command": "projectBrain.openIdentityForm",
+        "title": "Project Brain: Identity Setup Form",
+        "icon": "$(person)"
+      },
+      {
+        "command": "projectBrain.openIdentityFile",
+        "title": "Project Brain: Edit Agent Identity File",
+        "icon": "$(edit)"
+      },
+      {
+        "command": "projectBrain.configureSoul",
+        "title": "Project Brain: Configure Agent Soul",
+        "icon": "$(heart)"
+      },
+      {
+        "command": "projectBrain.openSoulFile",
+        "title": "Project Brain: Edit Agent Soul File",
+        "icon": "$(edit)"
+      },
+      {
+        "command": "projectBrain.configureUser",
+        "title": "Project Brain: Configure User Profile",
+        "icon": "$(person)"
+      },
+      {
+        "command": "projectBrain.openUserFile",
+        "title": "Project Brain: Edit User Profile File",
+        "icon": "$(edit)"
+      },
+      {
+        "command": "projectBrain.configureProgrammingPrefs",
+        "title": "Project Brain: Configure Programming Preferences",
+        "icon": "$(code)"
+      },
+      {
+        "command": "projectBrain.openProgrammingPrefsFile",
+        "title": "Project Brain: Edit Programming Preferences File",
+        "icon": "$(edit)"
+      },
+      {
+        "command": "projectBrain.delegate",
+        "title": "Project Brain: Delegate Task to Slave",
+        "icon": "$(run)"
+      },
+      {
+        "command": "projectBrain.spawnSession",
+        "title": "Project Brain: Spawn New Session",
+        "icon": "$(split-horizontal)"
+      },
+      {
+        "command": "projectBrain.saas.login",
+        "title": "Project Brain: Login to Cloud",
+        "icon": "$(sign-in)"
+      },
+      {
+        "command": "projectBrain.saas.logout",
+        "title": "Project Brain: Logout from Cloud",
+        "icon": "$(sign-out)"
+      },
+      {
+        "command": "projectBrain.saas.status",
+        "title": "Project Brain: Cloud Status",
+        "icon": "$(cloud)"
+      },
+      {
+        "command": "projectBrain.saas.syncOpinions",
+        "title": "Project Brain: Sync Opinions to Cloud",
+        "icon": "$(sync)"
+      },
+      {
+        "command": "projectBrain.restoreMemory",
+        "title": "Project Brain: Restore Memory from Cloud",
+        "icon": "$(cloud-download)"
+      },
+      {
+        "command": "projectBrain.createReminder",
+        "title": "Project Brain: Create Reminder",
+        "icon": "$(bell-dot)"
+      },
+      {
+        "command": "projectBrain.snoozeReminder",
+        "title": "Project Brain: Snooze Reminder",
+        "icon": "$(bell-slash)"
+      },
+      {
+        "command": "projectBrain.completeReminder",
+        "title": "Project Brain: Complete Reminder",
+        "icon": "$(check)"
+      },
+      {
+        "command": "projectBrain.deleteReminder",
+        "title": "Project Brain: Delete Reminder",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "projectBrain.muteReminder",
+        "title": "Project Brain: Toggle Mute Reminder",
+        "icon": "$(bell-slash)"
+      },
+      {
+        "command": "projectBrain.purgeCloudFiles",
+        "title": "Project Brain: Purge Cloud Files",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "projectBrain.strategy.toggleSatisfactionCheck",
+        "title": "Project Brain: Toggle Strategy Satisfaction Check",
+        "icon": "$(feedback)"
+      },
+      {
+        "command": "projectBrain.strategy.toggleAutoCommit",
+        "title": "Project Brain: Toggle Strategy Auto-Commit",
+        "icon": "$(git-commit)"
+      },
+      {
+        "command": "projectBrain.gates.toggle",
+        "title": "Project Brain: Configure Quality Gate Level",
+        "icon": "$(shield)"
+      },
+      {
+        "command": "projectBrain.toggleCronNotifications",
+        "title": "Project Brain: Toggle Cron Notifications",
+        "icon": "$(bell-slash)"
+      },
+      {
+        "command": "projectBrain.opencode.smokeTest",
+        "title": "Project Brain: OpenCode Smoke Test",
+        "icon": "$(beaker)"
+      },
+      {
+        "command": "projectBrain.opencode.startLoop",
+        "title": "Project Brain: OpenCode Start Loop",
+        "icon": "$(debug-start)"
+      },
+      {
+        "command": "projectBrain.opencode.status",
+        "title": "Project Brain: OpenCode Loops Status",
+        "icon": "$(list-tree)"
+      },
+      {
+        "command": "projectBrain.opencode.openUI",
+        "title": "Project Brain: OpenCode Open UI (TUI)",
+        "icon": "$(terminal)"
+      },
+      {
+        "command": "projectBrain.opencode.openWebUI",
+        "title": "Project Brain: OpenCode Open Web UI (Tab)",
+        "icon": "$(browser)"
+      },
+      {
+        "command": "projectBrain.opencode.stopServer",
+        "title": "Project Brain: OpenCode Stop Server",
+        "icon": "$(debug-stop)"
+      },
+      {
+        "command": "projectBrain.opencode.restartServer",
+        "title": "Project Brain: OpenCode Restart Server (apply config)",
+        "icon": "$(debug-restart)"
+      },
+      {
+        "command": "projectBrain.gateway.toggle",
+        "title": "Project Brain: Toggle MCP Gateway",
+        "icon": "$(plug)"
+      },
+      {
+        "command": "projectBrain.connectLoop",
+        "title": "Project Brain: Connect to Loop",
+        "icon": "$(link)"
+      },
+      {
+        "command": "projectBrain.loopPauseToggle",
+        "title": "Project Brain: Pause/Resume Loop",
+        "icon": "$(debug-pause)"
+      },
+      {
+        "command": "projectBrain.loopSendMessage",
+        "title": "Project Brain: Send Urgent Message to Loop",
+        "icon": "$(mail)"
+      },
+      {
+        "command": "projectBrain.loopHibernate",
+        "title": "Project Brain: Hibernate Loop",
+        "icon": "$(debug-step-out)"
+      },
+      {
+        "command": "projectBrain.loopResume",
+        "title": "Project Brain: Resume Hibernated Loop",
+        "icon": "$(debug-continue)"
+      },
+      {
+        "command": "projectBrain.gateway.showToken",
+        "title": "Project Brain: Show Gateway Token"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "projectBrain.openBrainHQ",
+          "when": "view == projectBrain.memoryView && projectBrain:enabled",
+          "group": "navigation@1"
+        },
+        {
+          "command": "projectBrain.importContentTxt",
+          "when": "view == projectBrain.memoryView && projectBrain:enabled",
+          "group": "navigation@4"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "projectBrain.snoozeReminder",
+          "when": "view == projectBrain.memoryView && viewItem == reminder-active",
+          "group": "inline"
+        },
+        {
+          "command": "projectBrain.completeReminder",
+          "when": "view == projectBrain.memoryView && viewItem == reminder-active",
+          "group": "inline"
+        },
+        {
+          "command": "projectBrain.muteReminder",
+          "when": "view == projectBrain.memoryView && viewItem == reminder-active",
+          "group": "inline"
+        },
+        {
+          "command": "projectBrain.deleteReminder",
+          "when": "view == projectBrain.memoryView && viewItem =~ /^reminder-/",
+          "group": "1_modify"
+        },
+        {
+          "command": "projectBrain.snoozeReminder",
+          "when": "view == projectBrain.memoryView && viewItem == reminder-active",
+          "group": "1_modify"
+        },
+        {
+          "command": "projectBrain.completeReminder",
+          "when": "view == projectBrain.memoryView && viewItem == reminder-active",
+          "group": "1_modify"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "projectBrain.scan",
+          "when": "projectBrain:enabled"
+        },
+        {
+          "command": "projectBrain.syncProject",
+          "when": "projectBrain:enabled"
+        },
+        {
+          "command": "projectBrain.checkHooksUpdate",
+          "when": "projectBrain:enabled"
+        },
+        {
+          "command": "projectBrain.status",
+          "when": "projectBrain:enabled"
+        },
+        {
+          "command": "projectBrain.openMemory",
+          "when": "projectBrain:enabled"
+        },
+        {
+          "command": "projectBrain.importContentTxt",
+          "when": "projectBrain:enabled"
+        },
+        {
+          "command": "projectBrain.openAdminPanel",
+          "when": "projectBrain:enabled"
+        },
+        {
+          "command": "projectBrain.openBrainHQ",
+          "when": "projectBrain:enabled"
+        },
+        {
+          "command": "projectBrain.launchOrchSession",
+          "when": "projectBrain:enabled"
+        },
+        {
+          "command": "projectBrain.startAutoVectorization",
+          "when": "projectBrain:enabled"
+        },
+        {
+          "command": "projectBrain.stopAutoVectorization",
+          "when": "projectBrain:enabled"
+        },
+        {
+          "command": "projectBrain.cloudSync",
+          "when": "projectBrain:enabled"
+        },
+        {
+          "command": "projectBrain.cloudSyncStatus",
+          "when": "projectBrain:enabled"
+        },
+        {
+          "command": "projectBrain.publishExtension",
+          "when": "projectBrain:enabled"
+        },
+        {
+          "command": "projectBrain.validateSoul",
+          "when": "projectBrain:enabled"
+        },
+        {
+          "command": "projectBrain.excludeFromGit",
+          "when": "projectBrain:enabled"
+        },
+        {
+          "command": "projectBrain.migrateLegacy",
+          "when": "projectBrain:enabled"
+        },
+        {
+          "command": "projectBrain.migrateKeysToGlobal",
+          "when": "projectBrain:enabled"
+        },
+        {
+          "command": "projectBrain.batch.newCommand",
+          "when": "projectBrain:enabled"
+        },
+        {
+          "command": "projectBrain.batch.editCommands",
+          "when": "projectBrain:enabled"
+        },
+        {
+          "command": "projectBrain.batch.viewOutput",
+          "when": "projectBrain:enabled"
+        },
+        {
+          "command": "projectBrain.batch.execute",
+          "when": "projectBrain:enabled"
+        },
+        {
+          "command": "projectBrain.saveSession",
+          "when": "projectBrain:enabled"
+        },
+        {
+          "command": "projectBrain.resumeSession",
+          "when": "projectBrain:enabled"
+        },
+        {
+          "command": "projectBrain.configureIdentity",
+          "when": "projectBrain:enabled"
+        },
+        {
+          "command": "projectBrain.openIdentityFile",
+          "when": "projectBrain:enabled"
+        },
+        {
+          "command": "projectBrain.configureSoul",
+          "when": "projectBrain:enabled"
+        },
+        {
+          "command": "projectBrain.openSoulFile",
+          "when": "projectBrain:enabled"
+        },
+        {
+          "command": "projectBrain.configureUser",
+          "when": "projectBrain:enabled"
+        },
+        {
+          "command": "projectBrain.openUserFile",
+          "when": "projectBrain:enabled"
+        },
+        {
+          "command": "projectBrain.configureProgrammingPrefs",
+          "when": "projectBrain:enabled"
+        },
+        {
+          "command": "projectBrain.openProgrammingPrefsFile",
+          "when": "projectBrain:enabled"
+        },
+        {
+          "command": "projectBrain.delegate",
+          "when": "projectBrain:enabled"
+        },
+        {
+          "command": "projectBrain.spawnSession",
+          "when": "projectBrain:enabled"
+        },
+        {
+          "command": "projectBrain.saas.login"
+        },
+        {
+          "command": "projectBrain.saas.logout",
+          "when": "projectBrain:enabled"
+        },
+        {
+          "command": "projectBrain.saas.status",
+          "when": "projectBrain:enabled"
+        },
+        {
+          "command": "projectBrain.saas.syncOpinions",
+          "when": "projectBrain:enabled"
+        },
+        {
+          "command": "projectBrain.restoreMemory",
+          "when": "projectBrain:enabled"
+        },
+        {
+          "command": "projectBrain.createReminder",
+          "when": "projectBrain:enabled"
+        },
+        {
+          "command": "projectBrain.snoozeReminder",
+          "when": "false"
+        },
+        {
+          "command": "projectBrain.completeReminder",
+          "when": "false"
+        },
+        {
+          "command": "projectBrain.deleteReminder",
+          "when": "false"
+        },
+        {
+          "command": "projectBrain.muteReminder",
+          "when": "false"
+        },
+        {
+          "command": "projectBrain.purgeCloudFiles",
+          "when": "projectBrain:enabled"
+        },
+        {
+          "command": "projectBrain.strategy.toggleSatisfactionCheck",
+          "when": "false"
+        },
+        {
+          "command": "projectBrain.strategy.toggleAutoCommit",
+          "when": "false"
+        },
+        {
+          "command": "projectBrain.toggleCronNotifications",
+          "when": "false"
+        },
+        {
+          "command": "projectBrain.gateway.toggle",
+          "when": "projectBrain:enabled"
+        },
+        {
+          "command": "projectBrain.connectLoop",
+          "when": "projectBrain:enabled"
+        },
+        {
+          "command": "projectBrain.loopPauseToggle",
+          "when": "projectBrain:enabled"
+        },
+        {
+          "command": "projectBrain.loopSendMessage",
+          "when": "projectBrain:enabled"
+        },
+        {
+          "command": "projectBrain.loopHibernate",
+          "when": "projectBrain:enabled"
+        },
+        {
+          "command": "projectBrain.loopResume",
+          "when": "projectBrain:enabled"
+        },
+        {
+          "command": "projectBrain.gateway.showToken",
+          "when": "projectBrain:enabled"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Project Brain",
+      "properties": {
+        "projectBrain.enabled": {
+          "type": "boolean",
+          "default": false,
+          "scope": "resource",
+          "description": "Enable Project Brain for this workspace folder. When disabled, the extension will not create any files, hooks, or configurations. Use 'Project Brain: Initialize' to enable."
+        },
+        "projectBrain.orchestrator.autoStart": {
+          "type": "boolean",
+          "default": false,
+          "description": "Auto-start the agent-orchestrator daemon (port 3101) when the extension activates. OFF by default: the detached daemon survived VS Code close and could accumulate as orphan processes, causing system-wide hard locks."
+        },
+        "projectBrain.memoryFolder": {
+          "type": "string",
+          "default": ".project-brain/memory",
+          "description": "Path to the memory folder (relative to workspace root)"
+        },
+        "projectBrain.generateInstructionFiles": {
+          "type": "string",
+          "enum": [
+            "none",
+            "minimal",
+            "full"
+          ],
+          "default": "minimal",
+          "description": "Control which AI instruction files are generated in the workspace. 'none' = only .project-brain/ (zero pollution). 'minimal' = copilot-instructions.md + agent definition. 'full' = all instruction files (AGENTS.md, CLAUDE.md, .cursorrules, subagents, prompts).",
+          "enumDescriptions": [
+            "No files outside .project-brain/ — ideal for shared repos",
+            "Only .github/copilot-instructions.md and .github/agents/projectbrain.agent.md",
+            "All AI instruction files (AGENTS.md, CLAUDE.md, .cursorrules, subagents, prompts, hooks)"
+          ]
+        },
+        "projectBrain.identityScope": {
+          "type": "string",
+          "enum": [
+            "global",
+            "project"
+          ],
+          "default": "global",
+          "description": "Where to store agent identity/personality. 'global' shares identity across all projects (recommended). 'project' keeps identity local to each workspace.",
+          "enumDescriptions": [
+            "Share identity, soul, user profile, and preferences across all projects",
+            "Keep identity configuration local to each project's .project-brain/memory/"
+          ]
+        },
+        "projectBrain.mcpServerPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to the MCP RAG server (leave empty for auto-detect)"
+        },
+        "projectBrain.gateway.enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable MCP Gateway server for external bot/agent connections (localhost only)"
+        },
+        "projectBrain.gateway.port": {
+          "type": "number",
+          "default": 3200,
+          "minimum": 1024,
+          "maximum": 65535,
+          "description": "Port for the MCP Gateway server (default: 3200)"
+        },
+        "projectBrain.gateway.autoStart": {
+          "type": "boolean",
+          "default": false,
+          "description": "Auto-start MCP Gateway on extension activation (requires gateway.enabled=true)"
+        },
+        "projectBrain.autoScan": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically scan project on startup"
+        },
+        "projectBrain.gatekeeper.useLlmEvaluation": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable LLM evaluation for ambiguous git commands in the gatekeeper (costs tokens, rarely changes result). Default: false (fail-safe DENY for unrecognized commands)."
+        },
+        "projectBrain.autoStartVectorization": {
+          "type": "boolean",
+          "default": false,
+          "description": "Automatically start vectorization when opening workspace"
+        },
+        "projectBrain.defaultCommitBypass": {
+          "type": "boolean",
+          "default": true,
+          "description": "Start new loop sessions with commit-gate bypass enabled by default. When true, the commit gate will not block synthesis submissions. Set to false to require explicit activation."
+        },
+        "projectBrain.cloudSync.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable automatic cloud sync for memory files (requires Pro plan). When enabled, memory files are synced to Project Brain cloud storage."
+        },
+        "projectBrain.cloudSync.autoDeleteAfterSync": {
+          "type": "string",
+          "enum": [
+            "never",
+            "space-limit",
+            "always"
+          ],
+          "default": "space-limit",
+          "description": "When to auto-delete local memory files after cloud sync: 'never' = keep all local copies, 'space-limit' = delete non-pinned when .project-brain/memory/ exceeds the configured limit, 'always' = delete all non-pinned immediately after upload.",
+          "enumDescriptions": [
+            "Keep all local copies (never delete)",
+            "Delete non-pinned files only when local storage exceeds the MB limit",
+            "Delete all non-pinned files immediately after successful upload"
+          ]
+        },
+        "projectBrain.cloudSync.localStorageLimitMB": {
+          "type": "number",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 500,
+          "description": "Maximum local storage (in MB) for .project-brain/memory/ before auto-deleting non-pinned files. Only applies when autoDeleteAfterSync is 'space-limit'."
+        },
+        "projectBrain.cloudSync.syncIntervalMinutes": {
+          "type": "number",
+          "default": 5,
+          "minimum": 1,
+          "maximum": 60,
+          "description": "How often to check for cloud updates (in minutes)."
+        },
+        "projectBrain.embeddings": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "remote",
+            "tfidf"
+          ],
+          "default": "auto",
+          "description": "Embedding provider: auto (best available), remote (TEI/HTTP server), tfidf (local fallback)"
+        },
+        "projectBrain.embeddingApiKey": {
+          "type": "string",
+          "default": "community",
+          "description": "API key for embedding server. Default 'community' uses the built-in Project Brain TEI server."
+        },
+        "projectBrain.embeddingModel": {
+          "type": "string",
+          "default": "BAAI/bge-small-en-v1.5",
+          "description": "Embedding model name. Default: BAAI/bge-small-en-v1.5 (built-in TEI server)."
+        },
+        "projectBrain.embeddingBaseUrl": {
+          "type": "string",
+          "default": "https://embeddings.example.com/brain-embed/v1",
+          "description": "Base URL for embedding API. Default uses the built-in Project Brain TEI server."
+        },
+        "projectBrain.sessionSummary": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable AI-powered session summarization using Copilot. When a session ends, the extension writes a pending context file. On next activation, Copilot summarizes it into learnings, decisions, and considerations."
+        },
+        "projectBrain.analyzeGitHistory": {
+          "type": "boolean",
+          "default": true,
+          "description": "Analyze git commit history during project scan to generate richer documentation (hotspots, coupling, contributors)"
+        },
+        "projectBrain.suggestActions": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show Ã°Å¸â€™Â¡ action suggestions after tool results (e.g., 'Explore in knowledge graph', 'View change history'). Only shown when search confidence is high."
+        },
+        "projectBrain.strategy.satisfactionCheck": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show a satisfaction check quick pick when a strategy completes. Disable to skip this step."
+        },
+        "projectBrain.strategy.autoCommit": {
+          "type": "boolean",
+          "default": true,
+          "description": "Offer auto-commit quick pick when a strategy completes. Disable to skip this step."
+        },
+        "projectBrain.opencode.enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable the experimental OpenCode Loops subsystem (provider-agnostic loops via a headless `opencode serve` process). Fully decoupled from the Copilot-based loops."
+        },
+        "projectBrain.opencode.serverPath": {
+          "type": "string",
+          "default": "",
+          "description": "Optional absolute path to the `opencode` binary. When empty, Project Brain resolves it from node_modules/.bin, PATH, or falls back to `npx opencode-ai@latest`."
+        },
+        "projectBrain.opencode.defaultModel": {
+          "type": "string",
+          "default": "openrouter/openai/gpt-4o-mini",
+          "description": "Default model for OpenCode loops and the web UI, as `providerID/modelID` (the first path segment is the provider). Must be a tool-capable model; free models often fail at tool-calling."
+        },
+        "projectBrain.opencode.serverPort": {
+          "type": "number",
+          "default": 0,
+          "description": "Preferred port for the `opencode` server. Use 0 to auto-pick a free port (recommended)."
+        },
+        "projectBrain.loop.maxCycles": {
+          "type": "number",
+          "default": 15,
+          "minimum": 3,
+          "maximum": 100,
+          "description": "Default maximum iterations before a loop automatically migrates to a new session to preserve context integrity."
+        },
+        "projectBrain.responseStyle": {
+          "type": "string",
+          "enum": [
+            "concise",
+            "detailed"
+          ],
+          "default": "concise",
+          "description": "Response style preference. 'concise' = brief, direct answers. 'detailed' = in-depth explanations. Auto-learned: saying 'mÃƒÂ¡s detalle' switches to detailed."
+        },
+        "projectBrain.language": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "es",
+            "en"
+          ],
+          "default": "auto",
+          "description": "Response language override. 'auto' = use agent identity language. 'es' = Spanish. 'en' = English."
+        },
+        "projectBrain.autoSessionSave": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically save session context when files are saved. This keeps .project-brain/memory/07_SESSION_HANDOFF.md up to date so AI agents can resume across context windows."
+        },
+        "projectBrain.autoSessionInterval": {
+          "type": "number",
+          "default": 120,
+          "minimum": 30,
+          "maximum": 600,
+          "description": "Minimum seconds between auto-session saves (default: 120s). Lower values = more frequent saves but more disk writes."
+        },
+        "projectBrain.modelRouter.brainTier": {
+          "type": "string",
+          "enum": [
+            "free",
+            "cheap",
+            "standard",
+            "premium",
+            "ultra"
+          ],
+          "default": "ultra",
+          "description": "Minimum model tier for Brain's own thinking. Default 'ultra' uses the most powerful model (Claude Opus 4.6)."
+        },
+        "projectBrain.modelRouter.defaultMaxTier": {
+          "type": "string",
+          "enum": [
+            "free",
+            "cheap",
+            "standard",
+            "premium",
+            "ultra"
+          ],
+          "default": "free",
+          "description": "Default cost ceiling for slave delegation tasks. Slaves won't use models above this tier unless explicitly overridden."
+        },
+        "projectBrain.modelRouter.maxRetries": {
+          "type": "number",
+          "default": 3,
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Maximum corrective retries when a slave's output fails validation. After this many failures, the task escalates to the next model tier."
+        },
+        "projectBrain.modelRouter.maxPowerRounds": {
+          "type": "number",
+          "default": 5,
+          "minimum": 0,
+          "maximum": 15,
+          "description": "Maximum tool-use rounds per slave delegation. Slaves can request workspace tools (read files, search, etc.) up to this many times."
+        },
+        "projectBrain.saas.enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable cloud features (login, skill marketplace, global memory sync). Requires an account at projectbrain.dev."
+        },
+        "projectBrain.saas.apiUrl": {
+          "type": "string",
+          "default": "https://api.projectbrain.tech",
+          "description": "Base URL for the Project Brain cloud API. Only change for self-hosted deployments."
+        },
+        "projectBrain.cron.intervalMinutes": {
+          "type": "number",
+          "default": 15,
+          "minimum": 5,
+          "maximum": 60,
+          "description": "How often (in minutes) cron reminders are evaluated. Lower = more responsive, higher = less CPU usage."
+        },
+        "projectBrain.cron.debugIntervalSeconds": {
+          "type": "number",
+          "default": 0,
+          "minimum": 0,
+          "maximum": 300,
+          "description": "Debug only: override cron scheduler interval in seconds (0 disables). Useful to validate automation quickly (e.g., 30s)."
+        },
+        "projectBrain.cron.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable automatic cron reminder evaluation in the background."
+        },
+        "projectBrain.cron.notificationsMuted": {
+          "type": "boolean",
+          "default": false,
+          "description": "Mute cron toast notifications. Alerts still run and badge updates, but no popups."
+        },
+        "projectBrain.orchestration.enabledModels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "Model IDs allowed in Brain HQ orchestration selectors. Empty = show all. Managed via Brain HQ Ã¢Å¡â„¢Ã¯Â¸Â button."
+        },
+        "projectBrain.retention.maxConversations": {
+          "type": "number",
+          "default": 20,
+          "minimum": 5,
+          "maximum": 100,
+          "description": "Maximum conversation transcript files to keep in .project-brain/memory/conversations/. Oldest files are deleted first."
+        },
+        "projectBrain.retention.maxSessions": {
+          "type": "number",
+          "default": 30,
+          "minimum": 5,
+          "maximum": 200,
+          "description": "Maximum session files to keep in .project-brain/memory/sessions/. Oldest files are deleted first."
+        },
+        "projectBrain.retention.autoSummaryMaxAgeDays": {
+          "type": "number",
+          "default": 60,
+          "minimum": 7,
+          "maximum": 365,
+          "description": "Remove auto-summary entries from 04_LEARNINGS.md older than this many days. Manual entries are never touched."
+        },
+        "projectBrain.reflectionApiUrl": {
+          "type": "string",
+          "default": "",
+          "description": "URL of the BERT Reflection Validation API (e.g., http://your-vps:8790). Leave empty to bypass validation (fail-open)."
+        },
+        "projectBrain.reflectionApiKey": {
+          "type": "string",
+          "default": "pb-reflection-2026",
+          "description": "API key for the Reflection Validation API. Must match the BRAIN_REFLECTION_API_KEY env var on the server."
+        },
+        "projectBrain.reflectionUseLmFallback": {
+          "type": "boolean",
+          "default": false,
+          "description": "Use VS Code's built-in LM API (Copilot) as opt-in classifier when heuristic is inconclusive. Costs Copilot credits per capture Ã¢â‚¬â€ only enable if you want maximum accuracy."
+        },
+        "projectBrain.bridge.geminiApiKey": {
+          "type": "string",
+          "default": "",
+          "scope": "machine-overridable",
+          "description": "Gemini API key for the Auto Loop Bridge PM. Get yours at https://aistudio.google.com/apikey"
+        },
+        "projectBrain.bridge.openrouterApiKey": {
+          "type": "string",
+          "default": "",
+          "scope": "machine-overridable",
+          "description": "OpenRouter API key for the Auto Loop Bridge PM. Get yours at https://openrouter.ai/keys"
+        },
+        "projectBrain.bridge.defaultProvider": {
+          "type": "string",
+          "default": "gemini",
+          "scope": "machine-overridable",
+          "description": "Default PM provider for Bridge sessions (e.g., 'gemini')."
+        },
+        "projectBrain.bridge.defaultModel": {
+          "type": "string",
+          "default": "gemini-2.5-flash",
+          "scope": "machine-overridable",
+          "description": "Default PM model for Bridge sessions."
+        },
+        "projectBrain.bridge.responseLanguage": {
+          "type": "string",
+          "default": "auto",
+          "enum": [
+            "auto",
+            "español",
+            "english",
+            "português",
+            "français",
+            "deutsch",
+            "italiano",
+            "日本語",
+            "中文",
+            "한국어"
+          ],
+          "scope": "machine-overridable",
+          "description": "Default response language for the PM advisor. When set to auto, PM responds in the same language as your messages."
+        },
+        "projectBrain.bridge.openrouter.enabledModelIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "scope": "machine-overridable",
+          "description": "List of enabled OpenRouter model IDs for the Bridge PM. Empty = all models enabled."
+        },
+        "projectBrain.bridge.gemini.enabledModelIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "scope": "machine-overridable",
+          "description": "List of enabled Gemini model IDs for the Bridge PM. Empty = all models enabled."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "sync-hooks": "node scripts/sync-hooks.mjs",
+    "compile": "node scripts/sync-hooks.mjs && node scripts/build-server.mjs",
+    "compile:ext": "tsc -p ./",
+    "compile:server": "node scripts/build-server.mjs",
+    "typecheck": "tsc -p ./ --noEmit",
+    "watch": "tsc -watch -p ./",
+    "deploy": "node scripts/build-server.mjs && node scripts/deploy-extension.mjs",
+    "compile:tests": "tsc -p ./",
+    "test": "node ./dist/test/runTest.js",
+    "test:hooks": "node --test .github/hooks/scripts/__tests__/*.test.mjs",
+    "test:gates": "node --test quality-gate/__tests__/*.test.mjs",
+    "pretest": "npm run compile && npm run compile:tests",
+    "test:sandbox": "npm run compile && npm run compile:tests && node ./dist/test/runSandboxTests.js",
+    "test:sandbox:free": "npm run compile && npm run compile:tests && node ./dist/test/runSandboxTests.js --tier free",
+    "test:sandbox:pro": "npm run compile && npm run compile:tests && node ./dist/test/runSandboxTests.js --tier pro",
+    "test:sandbox:admin": "npm run compile && npm run compile:tests && node ./dist/test/runSandboxTests.js --tier admin",
+    "test:analysis": "npm run compile && npm run compile:tests && node ./dist/test/runAnalysisTests.js",
+    "lint": "eslint src --ext ts",
+    "check:line-limits": "node scripts/check-src-line-limits.mjs",
+    "validate:skills": "node scripts/validate-skills-agents.mjs",
+    "verify:risk": "npm run check:line-limits",
+    "package": "npm run compile && npx @vscode/vsce package --no-dependencies"
+  },
+  "devDependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "@opencode-ai/sdk": "^1.15.12",
+    "@types/js-yaml": "^4.0.9",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^20.0.0",
+    "@types/sql.js": "^1.4.9",
+    "@types/vscode": "^1.93.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "@vscode/test-electron": "^2.5.2",
+    "assert": "^2.1.0",
+    "chokidar": "^3.6.0",
+    "commander": "^14.0.3",
+    "esbuild": "^0.27.3",
+    "eslint": "^8.50.0",
+    "graphology": "^0.26.0",
+    "graphology-shortest-path": "^2.1.0",
+    "graphology-traversal": "^0.3.1",
+    "graphology-types": "^0.24.8",
+    "mocha": "^11.7.5",
+    "oxc-parser": "^0.115.0",
+    "safe-regex2": "^5.0.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.3.0",
+    "vsce": "^2.15.0"
+  },
+  "dependencies": {
+    "glob": "^10.3.10",
+    "gray-matter": "^4.0.3",
+    "js-yaml": "^4.1.1",
+    "rimraf": "^5.0.10",
+    "simple-git": "^3.32.2",
+    "sql.js": "^1.14.0"
+  }
+}

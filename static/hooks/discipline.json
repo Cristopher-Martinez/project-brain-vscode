@@ -1,0 +1,20 @@
+﻿{
+    "maxFileLines":  400,
+    "warnFileLines":  350,
+    "srcPattern":  "[/\\\\]src[/\\\\]",
+    "codeDiscipline":  true,
+    "fastGate":  {
+                     "enabled":  true,
+                     "mode":  "enforce",
+                     "branchThreshold":  70,
+                     "maxConvergenceIterations":  3,
+                     "lintEscalationStrikes":  3,
+                     "requireCoverage":  false
+                 },
+    "hpdGate":  {
+                    "enabled":  true,
+                    "mode":  "enforce",
+                    "minScoreEnforce":  50,
+                    "minScoreT4":  65
+                }
+}

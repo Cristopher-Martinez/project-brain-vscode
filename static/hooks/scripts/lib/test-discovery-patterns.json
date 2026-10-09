@@ -1,0 +1,55 @@
+{
+  "candidateLocations": [
+    {
+      "id": "same-dir",
+      "segments": [],
+      "parentLevels": 0,
+      "weight": 5,
+      "modes": ["generic", "hook", "execution"]
+    },
+    {
+      "id": "local-tests",
+      "segments": ["__tests__"],
+      "parentLevels": 0,
+      "weight": 4,
+      "modes": ["generic", "hook", "execution"]
+    },
+    {
+      "id": "parent-tests",
+      "segments": ["__tests__"],
+      "parentLevels": 1,
+      "weight": 3,
+      "modes": ["generic", "hook", "execution"]
+    },
+    {
+      "id": "src-root-tests",
+      "segments": ["src", "__tests__"],
+      "rooted": true,
+      "weight": 2,
+      "modes": ["generic", "execution"]
+    },
+    {
+      "id": "root-tests",
+      "segments": ["__tests__"],
+      "rooted": true,
+      "weight": 1,
+      "modes": ["generic", "execution"]
+    },
+    {
+      "id": "hook-tests-root",
+      "segments": [".github", "hooks", "scripts", "__tests__"],
+      "rooted": true,
+      "weight": 6,
+      "modes": ["hook", "execution"]
+    },
+    {
+      "id": "static-hook-tests-root",
+      "segments": ["static", "hooks", "scripts", "__tests__"],
+      "rooted": true,
+      "weight": 6,
+      "modes": ["hook", "execution"]
+    }
+  ],
+  "suffixes": ["test", "spec"],
+  "extensions": [".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs"]
+}

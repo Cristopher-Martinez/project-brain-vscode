@@ -1,0 +1,22 @@
+{
+  "contract": {
+    "test": null,
+    "coverage": null,
+    "lint": null,
+    "mutation": null,
+    "framework": "unknown",
+    "invariantsPattern": "@invariant",
+    "coreModules": [
+      {
+        "path": "src/index.ts",
+        "reasons": [
+          "external-api"
+        ],
+        "autoDetected": true
+      }
+    ]
+  },
+  "timestamp": 1774884137640,
+  "wsRoot": "c:\\Users\\dev\\vscode-extensions\\project-brain\\src\\test\\fixtures\\test-workspace",
+  "packageHash": "98a76c2e43e95a5c5d88bb99465ff58f4db9c1ab"
+}

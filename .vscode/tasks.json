@@ -1,0 +1,54 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "SaaS: Wrangler Dev",
+      "type": "shell",
+      "command": "cd saas && npx wrangler dev src/index.ts --port 8787",
+      "isBackground": true,
+      "problemMatcher": [],
+      "group": "build"
+    },
+    {
+      "label": "SaaS: Wrangler Dev",
+      "type": "shell",
+      "command": "npx wrangler dev src/index.ts --port 8787",
+      "isBackground": true,
+      "problemMatcher": [],
+      "group": "build"
+    },
+    {
+      "label": "Wrangler Backend",
+      "type": "shell",
+      "command": "Set-Location saas; npx wrangler dev src/index.ts --port 8787",
+      "isBackground": true,
+      "problemMatcher": [],
+      "group": "build"
+    },
+    {
+      "label": "Agent Orchestrator (manual)",
+      "type": "shell",
+      "command": "node dist/agent-orchestrator/index.mjs",
+      "isBackground": true,
+      "problemMatcher": [],
+      "group": "build",
+      "detail": "Normally auto-spawned by extension. Use only for debugging."
+    },
+    {
+      "label": "Clean Sandbox Fresh",
+      "type": "shell",
+      "command": "if (Test-Path '.sandbox-fresh') { Remove-Item -Recurse -Force '.sandbox-fresh' }; New-Item -ItemType Directory -Path '.sandbox-fresh' | Out-Null; Write-Host '✓ .sandbox-fresh wiped clean'",
+      "problemMatcher": [],
+      "dependsOn": "npm: compile",
+      "detail": "Compiles extension, then wipes .sandbox-fresh/ for a clean-slate test."
+    },
+    {
+      "label": "MCP-Only: Open VS Code (Copilot + MCP)",
+      "type": "shell",
+      "command": "code --profile \"MCP-Only\" --new-window \"${workspaceFolder}/.sandbox-mcp/sample-project\" --disable-extension crismart.project-brain",
+      "problemMatcher": [],
+      "dependsOn": "npm: compile",
+      "detail": "Opens a dedicated 'MCP-Only' profile with the Project Brain extension disabled. Copilot Chat sees the brain ONLY via the MCP server (sample-project/.vscode/mcp.json). One-time: disable all extensions except GitHub Copilot + Copilot Chat in that profile."
+    }
+  ]
+}

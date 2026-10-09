@@ -1,0 +1,69 @@
+{
+  "_source": "project-brain",
+  "hooks": {
+    "SessionStart": [
+      {
+        "type": "command",
+        "command": "node .github/hooks/scripts/session-start.mjs",
+        "windows": "node .github/hooks/scripts/session-start.mjs",
+        "timeout": 10
+      }
+    ],
+    "PreToolUse": [
+      {
+        "type": "command",
+        "command": "node .github/hooks/scripts/pre-tool-security.mjs",
+        "windows": "node .github/hooks/scripts/pre-tool-security.mjs",
+        "timeout": 5
+      }
+    ],
+    "PostToolUse": [
+      {
+        "type": "command",
+        "command": "node .github/hooks/scripts/post-tool-capture.mjs",
+        "windows": "node .github/hooks/scripts/post-tool-capture.mjs",
+        "timeout": 5
+      }
+    ],
+    "PreCompact": [
+      {
+        "type": "command",
+        "command": "node .github/hooks/scripts/pre-compact.mjs",
+        "windows": "node .github/hooks/scripts/pre-compact.mjs",
+        "timeout": 10
+      }
+    ],
+    "SubagentStart": [
+      {
+        "type": "command",
+        "command": "node .github/hooks/scripts/subagent-start.mjs",
+        "windows": "node .github/hooks/scripts/subagent-start.mjs",
+        "timeout": 5
+      }
+    ],
+    "SubagentStop": [
+      {
+        "type": "command",
+        "command": "node .github/hooks/scripts/subagent-stop.mjs",
+        "windows": "node .github/hooks/scripts/subagent-stop.mjs",
+        "timeout": 5
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "type": "command",
+        "command": "node .github/hooks/scripts/user-prompt-writer.mjs",
+        "windows": "node .github/hooks/scripts/user-prompt-writer.mjs",
+        "timeout": 5
+      }
+    ],
+    "Stop": [
+      {
+        "type": "command",
+        "command": "node .github/hooks/scripts/session-stop.mjs",
+        "windows": "node .github/hooks/scripts/session-stop.mjs",
+        "timeout": 15
+      }
+    ]
+  }
+}

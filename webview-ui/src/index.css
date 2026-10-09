@@ -1,0 +1,163 @@
+﻿@import "tailwindcss";
+
+/* ─── VS Code theme variable mappings ──────────────────────────────────── */
+@theme {
+  --color-vsc-bg: var(--vscode-editor-background, #1e1e1e);
+  --color-vsc-fg: var(--vscode-editor-foreground, #cccccc);
+  --color-vsc-border: var(--vscode-panel-border, #333333);
+  --color-vsc-header: var(--vscode-sideBarSectionHeader-background, #252526);
+  --color-vsc-hover: var(--vscode-list-hoverBackground, #2a2d2e);
+  --color-vsc-accent: var(--vscode-textLink-foreground, #3794ff);
+  --color-vsc-success: #4ec9b0;
+  --color-vsc-error: #f14c4c;
+  --color-vsc-warning: #cca700;
+  --color-vsc-btn-bg: var(--vscode-button-background, #0e639c);
+  --color-vsc-btn-fg: var(--vscode-button-foreground, #ffffff);
+  --color-vsc-btn-sec-bg: var(--vscode-button-secondaryBackground, #3a3d41);
+  --color-vsc-btn-sec-fg: var(--vscode-button-secondaryForeground, #cccccc);
+}
+
+/* ─── Base styles ────────────────────────────────────────────────────── */
+body {
+  font-family: var(--vscode-font-family, "Segoe UI", sans-serif);
+  font-size: 13px;
+  color: var(--color-vsc-fg);
+  background: var(--color-vsc-bg);
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* ─── Scrollbar (VS Code style) ──────────────────────────────────────── */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
+
+/* ─── Animations ─────────────────────────────────────────────────────── */
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.3); }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+@keyframes glow-synthesis {
+  0% { box-shadow: 0 0 4px rgba(74, 222, 128, 0.4); }
+  100% { box-shadow: 0 0 12px rgba(74, 222, 128, 0.8), 0 0 24px rgba(74, 222, 128, 0.3); }
+}
+
+.has-synthesis {
+  animation: glow-synthesis 2s ease-in-out infinite alternate;
+}
+
+/* ─── Markdown renderer styles ───────────────────────────────────────── */
+.md-content h1, .md-content h2, .md-content h3 {
+  margin: 0.6em 0 0.3em;
+  line-height: 1.3;
+}
+.md-content h1 { font-size: 1.3em; }
+.md-content h2 { font-size: 1.15em; }
+.md-content h3 { font-size: 1.05em; }
+
+.md-content p {
+  margin: 0.3em 0;
+  line-height: 1.5;
+}
+
+.md-content ul, .md-content ol {
+  margin: 0.3em 0;
+  padding-left: 1.4em;
+}
+
+.md-content li {
+  margin: 0.15em 0;
+  line-height: 1.4;
+}
+
+.md-content blockquote {
+  border-left: 3px solid var(--vscode-textBlockQuote-border, #555);
+  margin: 0.4em 0;
+  padding: 0.2em 0.8em;
+  opacity: 0.85;
+}
+
+.md-content hr {
+  border: none;
+  border-top: 1px solid var(--vscode-panel-border, #333);
+  margin: 0.6em 0;
+}
+
+.md-content a {
+  color: var(--vscode-textLink-foreground, #3794ff);
+  text-decoration: none;
+}
+.md-content a:hover {
+  text-decoration: underline;
+}
+
+.md-content strong {
+  font-weight: 600;
+}
+
+.md-content .md-pre {
+  background: var(--vscode-textCodeBlock-background, #1a1a2e);
+  border-radius: 6px;
+  padding: 0.6em 0.8em;
+  margin: 0.4em 0;
+  overflow-x: auto;
+  font-family: var(--vscode-editor-font-family, "Cascadia Code", monospace);
+  font-size: 0.9em;
+  line-height: 1.4;
+  white-space: pre;
+}
+
+.md-content .md-inline {
+  background: var(--vscode-textCodeBlock-background, #1a1a2e);
+  padding: 0.15em 0.4em;
+  border-radius: 3px;
+  font-family: var(--vscode-editor-font-family, "Cascadia Code", monospace);
+  font-size: 0.9em;
+}
+
+.md-content .md-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.5em 0;
+  font-size: 0.9em;
+}
+.md-content .md-table th, .md-content .md-table td {
+  border: 1px solid var(--vscode-panel-border, #333);
+  padding: 0.3em 0.6em;
+}
+.md-content .md-table th {
+  background: var(--vscode-editorWidget-background, #252526);
+  font-weight: 600;
+}
+
+/* ─── PM Chat bubble styles ──────────────────────────────────────────── */
+.pm-bubble .md-content p { margin: 0.2em 0; }
+.pm-bubble .md-content h1, .pm-bubble .md-content h2, .pm-bubble .md-content h3 { margin: 0.4em 0 0.2em; }
+.pm-bubble .md-content ul, .pm-bubble .md-content ol { margin: 0.2em 0; }
+
+.pm-error-bubble {
+  background: rgba(241, 76, 76, 0.12) !important;
+  border: 1px solid rgba(241, 76, 76, 0.3) !important;
+}
+
+@keyframes typing-dot {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+.typing-dot {
+  animation: typing-dot 1.4s infinite ease-in-out;
+}
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }

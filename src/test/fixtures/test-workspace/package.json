@@ -1,0 +1,15 @@
+{
+  "name": "test-workspace",
+  "version": "1.0.0",
+  "description": "Test workspace for Project Brain tests",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

@@ -1,0 +1,142 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run Extension",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}",
+        "--profile",
+        "Pb dev",
+        "${workspaceFolder}"
+      ],
+      "outFiles": ["${workspaceFolder}/dist/**/*.js"],
+      "preLaunchTask": "npm: compile"
+    },
+    {
+      "name": "Run Extension (all extensions)",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}",
+        "${workspaceFolder}"
+      ],
+      "outFiles": ["${workspaceFolder}/dist/**/*.js"],
+      "preLaunchTask": "npm: compile"
+    },
+    {
+      "name": "Sandbox: Free",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}",
+        "--profile",
+        "Pb dev",
+        "${workspaceFolder}/.sandbox"
+      ],
+      "outFiles": ["${workspaceFolder}/dist/**/*.js"],
+      "preLaunchTask": "npm: compile",
+      "env": {
+        "PB_SANDBOX_TIER": "free"
+      }
+    },
+    {
+      "name": "Sandbox: Pro",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}",
+        "--profile",
+        "Pb dev",
+        "${workspaceFolder}/.sandbox"
+      ],
+      "outFiles": ["${workspaceFolder}/dist/**/*.js"],
+      "preLaunchTask": "npm: compile",
+      "env": {
+        "PB_SANDBOX_TIER": "pro"
+      }
+    },
+    {
+      "name": "Sandbox: Pro Admin",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}",
+        "--profile",
+        "Pb dev",
+        "${workspaceFolder}/.sandbox"
+      ],
+      "outFiles": ["${workspaceFolder}/dist/**/*.js"],
+      "preLaunchTask": "npm: compile",
+      "env": {
+        "PB_SANDBOX_TIER": "pro",
+        "PB_SANDBOX_ROLE": "admin"
+      }
+    },
+    {
+      "name": "Sandbox: Local SaaS",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}",
+        "--profile",
+        "Pb dev",
+        "${workspaceFolder}/.sandbox"
+      ],
+      "outFiles": ["${workspaceFolder}/dist/**/*.js"],
+      "preLaunchTask": "npm: compile",
+      "env": {
+        "VSCODE_SANDBOX_MODE": "true"
+      }
+    },
+    {
+      "name": "Sandbox: Fresh Install",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}",
+        "--profile",
+        "Pb dev",
+        "${workspaceFolder}/.sandbox-fresh"
+      ],
+      "outFiles": ["${workspaceFolder}/dist/**/*.js"],
+      "preLaunchTask": "Clean Sandbox Fresh"
+    },
+    {
+      "name": "Sandbox: MCP-Only Profile (Copilot + MCP)",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/.sandbox-mcp/launch-mcp-profile.mjs",
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"],
+      "preLaunchTask": "npm: compile"
+    },
+    {
+      "name": "Sandbox: MCP Probe (standalone)",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/.sandbox-mcp/probe-mcp.mjs",
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"],
+      "outFiles": ["${workspaceFolder}/dist/mcp-server/**/*.mjs"],
+      "preLaunchTask": "npm: compile"
+    },
+    {
+      "name": "Sandbox: MCP Server (raw stdio)",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/dist/mcp-server/index.mjs",
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"],
+      "outFiles": ["${workspaceFolder}/dist/mcp-server/**/*.mjs"],
+      "preLaunchTask": "npm: compile",
+      "env": {
+        "PROJECT_PATH": "${workspaceFolder}/.sandbox-mcp/sample-project"
+      }
+    }
+  ]
+}

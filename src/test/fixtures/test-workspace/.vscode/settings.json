@@ -1,0 +1,10 @@
+{
+    "chat.agentSkillsLocations": [
+        {
+            "path": "docs/memory/skills"
+        },
+        {
+            "path": ".github/skills"
+        }
+    ]
+}

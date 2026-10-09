@@ -1,0 +1,13 @@
+{
+  "servers": {
+    "rag-docs": {
+      "command": "node",
+      "args": [
+        "c:\\Users\\dev\\vscode-extensions\\project-brain\\dist\\mcp-server\\index.mjs"
+      ],
+      "env": {
+        "PROJECT_PATH": "c:\\Users\\dev\\vscode-extensions\\project-brain\\src\\test\\fixtures\\test-workspace"
+      }
+    }
+  }
+}
